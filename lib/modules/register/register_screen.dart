@@ -1,13 +1,16 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/layout/main_layout.dart';
 import 'package:social_app/modules/register/cubit/cubit.dart';
 import 'package:social_app/modules/register/cubit/states.dart';
 import 'package:social_app/shared/components/components.dart';
-import 'package:social_app/shared/styles/colors.dart';
 
 class RegisterScreen extends StatelessWidget {
+  var userNameController = TextEditingController();
   var emailController = TextEditingController();
   var passwordController = TextEditingController();
+  var phoneController = TextEditingController();
   final formGlobalKey = GlobalKey<FormState>();
 
   bool isPasswordValid(String password) => password.length >= 8;
@@ -23,36 +26,39 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     RegisterCubit cubit = RegisterCubit.get(context);
     return BlocConsumer<RegisterCubit, RegisterStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is CreateUserOnSuccessState) {
+          navigateTo(
+            context: context,
+            newRoute: MainLayout(),
+            backRoute: false,
+          );
+        }
+      },
       builder: (context, state) => Scaffold(
-        backgroundColor: kMainColor,
-        body: reusableFormCard(
+        body: entryBuilder(
           key: formGlobalKey,
+          title: 'Register',
           children: [
-            Text(
-              'Register',
-              style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-              ),
+            defaultFormField(
+              controller: userNameController,
+              label: 'Full Name',
+              type: TextInputType.name,
+              prefix: Icons.person,
+              validate: (name) {
+                if (name!.isEmpty) return 'Complete all fields';
+              },
             ),
             SizedBox(
-              height: 30.0,
+              height: 20.0,
             ),
-            TextFormField(
+            defaultFormField(
               controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                prefixIcon: Icon(
-                  Icons.email,
-                ),
-                border: OutlineInputBorder(),
-              ),
-              validator: (email) {
-                if (isEmailValid(email.toString()))
-                  return null;
-                else
+              label: 'Email Address',
+              type: TextInputType.emailAddress,
+              prefix: Icons.email,
+              validate: (email) {
+                if (!isEmailValid(email.toString()))
                   return 'Enter a valid email address';
               },
             ),
@@ -70,21 +76,42 @@ class RegisterScreen extends StatelessWidget {
               },
               prefix: Icons.lock,
               validate: (password) {
-                if (isPasswordValid(password.toString()))
-                  return null;
-                else
+                if (!isPasswordValid(password.toString()))
                   return 'Enter a valid password';
               },
             ),
             SizedBox(
               height: 20.0,
             ),
-            defaultButton(
-              text: 'Register',
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (formGlobalKey.currentState!.validate()) {}
+            defaultFormField(
+              controller: phoneController,
+              label: 'Phone',
+              type: TextInputType.phone,
+              prefix: Icons.phone,
+              validate: (number) {
+                if (number!.isEmpty) return 'Complete all fields';
               },
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            ConditionalBuilder(
+              condition: state is! RegisterOnLoadingState,
+              builder: (BuildContext context) => defaultButton(
+                onPressed: () {
+                  if (formGlobalKey.currentState!.validate()) {
+                    RegisterCubit.get(context).userRegister(
+                      name: userNameController.text,
+                      email: emailController.text,
+                      password: passwordController.text,
+                      phone: phoneController.text,
+                    );
+                  }
+                },
+                text: 'Register',
+              ),
+              fallback: (BuildContext context) =>
+                  Center(child: CircularProgressIndicator()),
             ),
             SizedBox(
               height: 10.0,

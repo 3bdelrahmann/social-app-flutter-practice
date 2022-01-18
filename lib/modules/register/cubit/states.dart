@@ -12,4 +12,14 @@ class RegisterOnFailedState extends RegisterStates {
   RegisterOnFailedState(this.error);
 }
 
+class CreateUserOnLoadingState extends RegisterStates {}
+
+class CreateUserOnSuccessState extends RegisterStates {}
+
+class CreateUserOnFailedState extends RegisterStates {
+  final String error;
+
+  CreateUserOnFailedState(this.error);
+}
+
 class RegisterOnChangePasswordState extends RegisterStates {}

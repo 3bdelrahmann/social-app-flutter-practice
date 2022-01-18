@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:social_app/shared/styles/colors.dart';
@@ -28,6 +29,7 @@ Widget defaultFormField({
   bool isClickable = true,
   bool readOnly = false,
   int? maxLength,
+  double radius = 10.0,
 }) =>
     Container(
       color: Colors.white,
@@ -56,7 +58,10 @@ Widget defaultFormField({
                   ),
                 )
               : null,
-          border: OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(radius),
+          ),
+          filled: true,
         ),
       ),
     );
@@ -86,6 +91,51 @@ Widget reusableFormCard({
       ),
     );
 
+Widget entryBuilder({
+  Key? key,
+  required String title,
+  required List<Widget> children,
+}) =>
+    Column(
+      children: [
+        Expanded(
+            child: Container(
+          margin: EdgeInsets.only(bottom: 10.0),
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                fontSize: 40.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          decoration: BoxDecoration(
+            color: kMainColor,
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(180),
+            ),
+          ),
+        )),
+        Expanded(
+            flex: 3,
+            child: Container(
+              padding: EdgeInsets.all(30.0),
+              child: Center(
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: key,
+                    child: Column(
+                      children: children,
+                    ),
+                  ),
+                ),
+              ),
+            )),
+      ],
+    );
 Widget defaultButton({
   required String text,
   required VoidCallback onPressed,
@@ -167,8 +217,8 @@ Widget roundIconButton({
       ),
       onPressed: onPressed,
       constraints: const BoxConstraints.tightFor(
-        width: 40.0,
-        height: 40.0,
+        width: 60.0,
+        height: 60.0,
       ),
       shape: const CircleBorder(),
       fillColor: color,

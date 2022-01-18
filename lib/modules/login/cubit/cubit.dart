@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/modules/login/cubit/states.dart';
@@ -11,7 +12,19 @@ class LoginCubit extends Cubit<LoginStates> {
   void userLogin({
     required String email,
     required String password,
-  }) {}
+  }) {
+    emit(LoginOnLoadingState());
+    FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    )
+        .then((value) {
+      emit(LoginOnSuccessState());
+    }).catchError((error) {
+      emit(LoginOnFailedState(error.toString()));
+    });
+  }
 
   IconData visibility = Icons.visibility_outlined;
   bool secured = true;

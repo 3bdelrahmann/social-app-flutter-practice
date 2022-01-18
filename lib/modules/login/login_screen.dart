@@ -1,10 +1,11 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/layout/main_layout.dart';
 import 'package:social_app/modules/login/cubit/cubit.dart';
 import 'package:social_app/modules/login/cubit/states.dart';
 import 'package:social_app/modules/register/register_screen.dart';
 import 'package:social_app/shared/components/components.dart';
-import 'package:social_app/shared/styles/colors.dart';
 
 class LoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
@@ -24,33 +25,26 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is LoginOnSuccessState) {
+          navigateTo(
+            context: context,
+            newRoute: MainLayout(),
+            backRoute: false,
+          );
+        }
+      },
       builder: (context, state) => Scaffold(
-        backgroundColor: kMainColor,
-        body: reusableFormCard(
+        body: entryBuilder(
+          title: 'login',
           key: formGlobalKey,
           children: [
-            Text(
-              'LOGIN',
-              style: TextStyle(
-                fontSize: 30.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(
-              height: 30.0,
-            ),
-            TextFormField(
+            defaultFormField(
               controller: emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                prefixIcon: Icon(
-                  Icons.email,
-                ),
-                border: OutlineInputBorder(),
-              ),
-              validator: (email) {
+              label: 'Email Address',
+              type: TextInputType.emailAddress,
+              prefix: Icons.email,
+              validate: (email) {
                 if (isEmailValid(email.toString()))
                   return null;
                 else
@@ -80,12 +74,21 @@ class LoginScreen extends StatelessWidget {
             SizedBox(
               height: 20.0,
             ),
-            defaultButton(
-              text: 'login',
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (formGlobalKey.currentState!.validate()) {}
-              },
+            ConditionalBuilder(
+              condition: state is! LoginOnLoadingState,
+              builder: (BuildContext context) => defaultButton(
+                onPressed: () {
+                  if (formGlobalKey.currentState!.validate()) {
+                    cubit.userLogin(
+                      email: emailController.text,
+                      password: passwordController.text,
+                    );
+                  }
+                },
+                text: 'login',
+              ),
+              fallback: (BuildContext context) =>
+                  Center(child: CircularProgressIndicator()),
             ),
             SizedBox(
               height: 10.0,
