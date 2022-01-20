@@ -48,7 +48,10 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie_animations/
-#  fonts:
-#    - family: Jannah
-#      fonts:
-#        - asset: assets/fonts/
+  fonts:
+    - family: Jannah
+      fonts:
+        - asset: assets/fonts/jannah.ttf
+    - family: IconBroken
+      fonts:
+        - asset: assets/fonts/icons.ttf

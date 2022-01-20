@@ -6,6 +6,7 @@ import 'package:social_app/modules/login/cubit/cubit.dart';
 import 'package:social_app/modules/login/cubit/states.dart';
 import 'package:social_app/modules/register/register_screen.dart';
 import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache_helper.dart';
 
 class LoginScreen extends StatelessWidget {
   var emailController = TextEditingController();
@@ -26,12 +27,26 @@ class LoginScreen extends StatelessWidget {
     LoginCubit cubit = LoginCubit.get(context);
     return BlocConsumer<LoginCubit, LoginStates>(
       listener: (context, state) {
-        if (state is LoginOnSuccessState) {
-          navigateTo(
-            context: context,
-            newRoute: MainLayout(),
-            backRoute: false,
+        if (state is LoginOnFailedState) {
+          showToast(
+            text: state.error,
+            states: ToastStates.ERROR,
           );
+        }
+        if (state is LoginOnSuccessState) {
+          CacheHelper.saveData(key: 'userId', value: state.userId)
+              .then((value) {
+            navigateTo(
+              context: context,
+              newRoute: MainLayout(),
+              backRoute: false,
+            );
+          }).catchError((error) {
+            showToast(
+              text: error,
+              states: ToastStates.ERROR,
+            );
+          });
         }
       },
       builder: (context, state) => Scaffold(
@@ -39,6 +54,9 @@ class LoginScreen extends StatelessWidget {
           title: 'login',
           key: formGlobalKey,
           children: [
+            SizedBox(
+              height: 10.0,
+            ),
             defaultFormField(
               controller: emailController,
               label: 'Email Address',

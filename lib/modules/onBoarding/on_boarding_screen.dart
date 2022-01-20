@@ -3,6 +3,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:social_app/modules/login/login_screen.dart';
 import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache_helper.dart';
 import 'package:social_app/shared/styles/colors.dart';
 
 class BoardingModel {
@@ -45,11 +46,18 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   bool isLast = false;
 
   void submit() {
-    navigateTo(
-      context: context,
-      newRoute: LoginScreen(),
-      backRoute: false,
-    );
+    CacheHelper.saveData(
+      key: 'onBoarding',
+      value: true,
+    ).then((value) {
+      if (value) {
+        navigateTo(
+          context: context,
+          newRoute: LoginScreen(),
+          backRoute: false,
+        );
+      }
+    });
   }
 
   @override

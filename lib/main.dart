@@ -1,12 +1,16 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/modules/login/cubit/cubit.dart';
 import 'package:social_app/modules/onBoarding/on_boarding_screen.dart';
 import 'package:social_app/modules/register/cubit/cubit.dart';
+import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/cubit/states.dart';
-import 'package:social_app/shared/styles/colors.dart';
+import 'package:social_app/shared/styles/themes.dart';
+import 'layout/main_layout.dart';
+import 'modules/login/login_screen.dart';
 import 'shared/bloc_observer.dart';
 import 'shared/network/local/cache_helper.dart';
 
@@ -21,11 +25,20 @@ void main() async {
   await Firebase.initializeApp();
   await CacheHelper.init();
 
-  runApp(SocialApp());
+  bool? onBoarding = CacheHelper.getData(key: 'onBoarding') ?? false;
+  userId = CacheHelper.getData(key: 'userId') ?? ' ';
+  runApp(SocialApp(
+    onBoarding: onBoarding!,
+    userId: userId,
+  ));
 }
 
 class SocialApp extends StatelessWidget {
-  const SocialApp({Key? key}) : super(key: key);
+  final bool onBoarding;
+  final String userId;
+
+  const SocialApp({Key? key, required this.onBoarding, required this.userId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +51,21 @@ class SocialApp extends StatelessWidget {
             create: (BuildContext context) => RegisterCubit(),
           ),
           BlocProvider(
-            create: (BuildContext context) => AppCubit(),
+            create: (BuildContext context) => AppCubit()..getUserData(),
           )
         ],
         child: BlocConsumer<AppCubit, AppStates>(
             listener: (context, state) {},
             builder: (context, state) => MaterialApp(
                   debugShowCheckedModeBanner: false,
-                  theme: ThemeData(
-                    primarySwatch: kMainColor,
-                  ),
-                  home: OnBoardingScreen(),
+                  theme: lightTheme,
+                  home: ConditionalBuilder(
+                      condition: onBoarding,
+                      builder: (BuildContext context) => ConditionalBuilder(
+                          condition: userId != ' ',
+                          builder: (BuildContext context) => MainLayout(),
+                          fallback: (BuildContext context) => LoginScreen()),
+                      fallback: (BuildContext context) => OnBoardingScreen()),
                 )));
   }
 }

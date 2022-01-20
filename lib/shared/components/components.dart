@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -222,4 +223,33 @@ Widget roundIconButton({
       ),
       shape: const CircleBorder(),
       fillColor: color,
+    );
+Widget verifyEmailNotifier() => Container(
+      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      color: Colors.amber.withOpacity(0.8),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline),
+          SizedBox(
+            width: 15.0,
+          ),
+          Expanded(
+            child: Text('Please verify your email'),
+          ),
+          defaultTextButton(
+              onPressed: () {
+                FirebaseAuth.instance.currentUser?.sendEmailVerification();
+                showToast(text: 'Sent', states: ToastStates.SUCCESS);
+              },
+              text: 'send'),
+        ],
+      ),
+    );
+
+Widget withNotifier({required Widget child}) => Stack(
+      children: [
+        child,
+        if (!FirebaseAuth.instance.currentUser!.emailVerified)
+          verifyEmailNotifier(),
+      ],
     );

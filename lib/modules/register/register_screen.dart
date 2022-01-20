@@ -5,6 +5,7 @@ import 'package:social_app/layout/main_layout.dart';
 import 'package:social_app/modules/register/cubit/cubit.dart';
 import 'package:social_app/modules/register/cubit/states.dart';
 import 'package:social_app/shared/components/components.dart';
+import 'package:social_app/shared/network/local/cache_helper.dart';
 
 class RegisterScreen extends StatelessWidget {
   var userNameController = TextEditingController();
@@ -28,11 +29,19 @@ class RegisterScreen extends StatelessWidget {
     return BlocConsumer<RegisterCubit, RegisterStates>(
       listener: (context, state) {
         if (state is CreateUserOnSuccessState) {
-          navigateTo(
-            context: context,
-            newRoute: MainLayout(),
-            backRoute: false,
-          );
+          CacheHelper.saveData(key: 'userId', value: state.userId)
+              .then((value) {
+            navigateTo(
+              context: context,
+              newRoute: MainLayout(),
+              backRoute: false,
+            );
+          }).catchError((error) {
+            showToast(
+              text: error,
+              states: ToastStates.ERROR,
+            );
+          });
         }
       },
       builder: (context, state) => Scaffold(
@@ -40,6 +49,9 @@ class RegisterScreen extends StatelessWidget {
           key: formGlobalKey,
           title: 'Register',
           children: [
+            SizedBox(
+              height: 10.0,
+            ),
             defaultFormField(
               controller: userNameController,
               label: 'Full Name',

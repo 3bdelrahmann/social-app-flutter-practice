@@ -41,13 +41,22 @@ class RegisterCubit extends Cubit<RegisterStates> {
     required String uId,
   }) {
     emit(CreateUserOnLoadingState());
-    UserModel model = UserModel(name, email, phone, uId);
+    UserModel model = UserModel(
+      name: name,
+      email: email,
+      phone: phone,
+      uId: uId,
+      image: '',
+      cover: '',
+      bio: '',
+      isEmailVerified: false,
+    );
     FirebaseFirestore.instance
         .collection('users')
         .doc(uId)
         .set(model.toMap())
         .then((value) {
-      emit(CreateUserOnSuccessState());
+      emit(CreateUserOnSuccessState(uId));
     }).catchError((error) {
       emit(CreateUserOnFailedState(error));
     });
