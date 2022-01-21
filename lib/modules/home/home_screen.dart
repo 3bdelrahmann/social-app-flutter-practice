@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
+import 'package:social_app/shared/cubit/states.dart';
 import 'package:social_app/shared/styles/icon_broken.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -8,36 +10,63 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
-      child: Column(
-        children: [
-          Card(
-            elevation: 5.0,
-            clipBehavior: Clip.antiAliasWithSaveLayer,
-            margin: EdgeInsets.all(8.0),
-            child: Image(
-              image: NetworkImage(
-                'https://1.bp.blogspot.com/-cc_16uX65Pw/XyxZAWjgbFI/AAAAAAAA3ms/6aKu2E63xoA1l9YmODY-_j0FM3TAryBowCLcBGAsYHQ/s2560/viper-valorant-4k-artwork-px-3840x2160.jpg',
+    AppCubit cubit = AppCubit.get(context);
+    return BlocConsumer<AppCubit, AppStates>(
+      listener: (context, state) {},
+      builder: (context, state) => SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Card(
+              elevation: 5.0,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              margin: EdgeInsets.all(8.0),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 24.0,
+                      backgroundImage: NetworkImage(cubit.userModel!.image!),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () {},
+                        child: Container(
+                          padding: EdgeInsets.all(15.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30.0),
+                            color: Colors.grey[200],
+                          ),
+                          child: Text(
+                            'What\'s in your mind?',
+                            style:
+                                Theme.of(context).textTheme.caption?.copyWith(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              fit: BoxFit.cover,
-              height: 200.0,
-              width: double.infinity,
             ),
-          ),
-          ListView.separated(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) =>
-                  buildPostsItem(context, AppCubit.get(context).userModel!),
-              separatorBuilder: (context, index) => SizedBox(
-                    height: 8.0,
-                  ),
-              itemCount: 10),
-          SizedBox(
-            height: 8.0,
-          ),
-        ],
+            ListView.separated(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) =>
+                    buildPostsItem(context, cubit.userModel!),
+                separatorBuilder: (context, index) => SizedBox(
+                      height: 8.0,
+                    ),
+                itemCount: 10),
+            SizedBox(
+              height: 8.0,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -264,9 +293,7 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 15.0,
-                      backgroundImage: NetworkImage(
-                        'https://1.bp.blogspot.com/-pDeKdz6sowU/XzioH7IanZI/AAAAAAAA4eY/1fVtAS0WiD8ZYrtm-9wikLpoKm4et_smwCLcBGAsYHQ/w1200-h675-p-k-no-nu/viper-valorant-2020-game-sk-3840x2160.jpg',
-                      ),
+                      backgroundImage: NetworkImage(model.image!),
                     ),
                     SizedBox(
                       width: 20.0,

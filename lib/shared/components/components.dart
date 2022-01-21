@@ -31,6 +31,7 @@ Widget defaultFormField({
   bool readOnly = false,
   int? maxLength,
   double radius = 10.0,
+  bool? filled = true,
 }) =>
     Container(
       color: Colors.white,
@@ -62,7 +63,7 @@ Widget defaultFormField({
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(radius),
           ),
-          filled: true,
+          filled: filled,
         ),
       ),
     );

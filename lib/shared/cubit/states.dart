@@ -13,3 +13,11 @@ class AppGetUserOnFailedState extends AppStates {
 }
 
 class AppChangeNavBarState extends AppStates {}
+
+class AppProfileImagePickedOnSuccessState extends AppStates {}
+
+class AppProfileImagePickedOnFailedState extends AppStates {}
+
+class AppCoverImagePickedOnSuccessState extends AppStates {}
+
+class AppCoverImagePickedOnFailedState extends AppStates {}

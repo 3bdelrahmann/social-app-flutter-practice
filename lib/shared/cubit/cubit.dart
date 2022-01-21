@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:social_app/modules/chats/chats_screen.dart';
 import 'package:social_app/modules/home/home_screen.dart';
@@ -52,5 +55,32 @@ class AppCubit extends Cubit<AppStates> {
   void ChangeNavBar(int index) {
     currentIndex = index;
     emit(AppChangeNavBarState());
+  }
+
+  var picker = ImagePicker();
+  File? profileImage;
+
+  Future<void> pickProfileImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      profileImage = File(pickedFile.path);
+      emit(AppProfileImagePickedOnSuccessState());
+    } else {
+      print('No image selected.');
+      emit(AppProfileImagePickedOnFailedState());
+    }
+  }
+
+  File? coverImage;
+
+  Future<void> pickCoverImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      coverImage = File(pickedFile.path);
+      emit(AppCoverImagePickedOnSuccessState());
+    } else {
+      print('No image selected.');
+      emit(AppCoverImagePickedOnFailedState());
+    }
   }
 }
