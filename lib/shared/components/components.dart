@@ -141,14 +141,16 @@ Widget entryBuilder({
 Widget defaultButton({
   required String text,
   required VoidCallback onPressed,
+  double? radius = 10.0,
+  double? height = 50.0,
 }) =>
     Container(
       width: double.infinity,
       decoration: BoxDecoration(
         color: kMainColor,
-        borderRadius: BorderRadius.circular(10.0),
+        borderRadius: BorderRadius.circular(radius!),
       ),
-      height: 50.0,
+      height: height,
       child: MaterialButton(
         onPressed: onPressed,
         child: Text(

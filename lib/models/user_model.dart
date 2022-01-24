@@ -7,6 +7,7 @@ class UserModel {
   String? cover;
   String? bio;
   bool? isEmailVerified;
+  bool? verifiedBadge;
 
   UserModel({
     this.name,
@@ -17,6 +18,7 @@ class UserModel {
     this.cover,
     this.bio,
     this.isEmailVerified,
+    this.verifiedBadge,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,7 @@ class UserModel {
     cover = json['cover'];
     bio = json['bio'];
     isEmailVerified = json['isEmailVerified'];
+    verifiedBadge = json['verifiedBadge'];
   }
 
   Map<String, dynamic> toMap() {
@@ -40,6 +43,7 @@ class UserModel {
       'cover': cover,
       'bio': bio,
       'isEmailVerified': isEmailVerified,
+      'verifiedBadge': verifiedBadge,
     };
   }
 }

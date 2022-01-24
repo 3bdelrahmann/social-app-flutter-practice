@@ -23,7 +23,7 @@ class RegisterCubit extends Cubit<RegisterStates> {
       password: password,
     )
         .then((value) {
-      createUserDate(
+      createUserData(
         name: name,
         email: email,
         phone: phone,
@@ -34,7 +34,7 @@ class RegisterCubit extends Cubit<RegisterStates> {
     });
   }
 
-  void createUserDate({
+  void createUserData({
     required String name,
     required String email,
     required String phone,
@@ -47,11 +47,12 @@ class RegisterCubit extends Cubit<RegisterStates> {
       phone: phone,
       uId: uId,
       image:
-          'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/person.png?alt=media&token=cab30f3c-e997-4ffe-a09f-ea75fa5353ce',
+          'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/default-profile.png?alt=media&token=8abeb46c-805e-4fe5-9132-f1cb83742dee',
       cover:
-          'firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/jeremy-cai-mnF75FoPBWY-unsplash.jpg?alt=media&token=493a285c-c096-4351-8984-7e29630206b2',
+          'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/default-cover.jpg?alt=media&token=d60819f8-5673-455c-9d70-2684a5d9754b',
       bio: 'bio ...',
       isEmailVerified: false,
+      verifiedBadge: false,
     );
     FirebaseFirestore.instance
         .collection('users')

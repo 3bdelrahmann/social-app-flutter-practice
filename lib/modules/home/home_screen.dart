@@ -1,6 +1,12 @@
+import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_app/models/post_model.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:social_app/modules/add_post/addPostScreen.dart';
+import 'package:social_app/modules/comments/comments_screen.dart';
+import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/cubit/states.dart';
 import 'package:social_app/shared/styles/icon_broken.dart';
@@ -13,79 +19,103 @@ class HomeScreen extends StatelessWidget {
     AppCubit cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
-      builder: (context, state) => SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Card(
-              elevation: 5.0,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              margin: EdgeInsets.all(8.0),
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 24.0,
-                      backgroundImage: NetworkImage(cubit.userModel!.image!),
-                    ),
-                    SizedBox(
-                      width: 10.0,
-                    ),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () {},
-                        child: Container(
-                          padding: EdgeInsets.all(15.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(30.0),
-                            color: Colors.grey[200],
-                          ),
-                          child: Text(
-                            'What\'s in your mind?',
-                            style:
-                                Theme.of(context).textTheme.caption?.copyWith(),
+      builder: (context, state) => ConditionalBuilder(
+        condition: cubit.posts.length > 0 && cubit.postsUsers.length > 0,
+        builder: (context) => SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              Card(
+                elevation: 5.0,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                margin: EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 24.0,
+                        backgroundImage: NetworkImage(cubit.userModel!.image!),
+                      ),
+                      SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            navigateTo(
+                              context: context,
+                              newRoute: AddPostScreen(),
+                              backRoute: true,
+                            );
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Colors.grey[200],
+                            ),
+                            child: Text(
+                              'What\'s in your mind?',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-            ListView.separated(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) =>
-                    buildPostsItem(context, cubit.userModel!),
-                separatorBuilder: (context, index) => SizedBox(
-                      height: 8.0,
-                    ),
-                itemCount: 10),
-            SizedBox(
-              height: 8.0,
-            ),
-          ],
+              ListView.separated(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) => buildPostsItem(
+                      context: context,
+                      postModel: cubit.posts[index],
+                      postsUsersModel: cubit.postsUsers[index],
+                      postId: cubit.postsId[index],
+                      index: index),
+                  separatorBuilder: (context, index) => SizedBox(
+                        height: 8.0,
+                      ),
+                  itemCount: cubit.posts.length),
+              SizedBox(
+                height: 8.0,
+              ),
+            ],
+          ),
+        ),
+        fallback: (context) => Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );
   }
 
-  Widget buildPostsItem(BuildContext context, UserModel model) => Card(
+  Widget buildPostsItem({
+    required BuildContext context,
+    required PostModel postModel,
+    required UserModel postsUsersModel,
+    required String postId,
+    required index,
+  }) =>
+      Card(
         elevation: 5.0,
         clipBehavior: Clip.antiAliasWithSaveLayer,
         margin: EdgeInsets.all(8.0),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
                   CircleAvatar(
                     radius: 30.0,
-                    backgroundImage: NetworkImage(
-                      'https://1.bp.blogspot.com/-pDeKdz6sowU/XzioH7IanZI/AAAAAAAA4eY/1fVtAS0WiD8ZYrtm-9wikLpoKm4et_smwCLcBGAsYHQ/w1200-h675-p-k-no-nu/viper-valorant-2020-game-sk-3840x2160.jpg',
-                    ),
+                    backgroundImage: NetworkImage(postsUsersModel.image!),
                   ),
                   SizedBox(
                     width: 20.0,
@@ -97,7 +127,7 @@ class HomeScreen extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Delilah Sabine',
+                              postsUsersModel.name!,
                               style: TextStyle(
                                 height: 1.4,
                               ),
@@ -105,15 +135,16 @@ class HomeScreen extends StatelessWidget {
                             SizedBox(
                               width: 5.0,
                             ),
-                            Icon(
-                              Icons.check_circle,
-                              color: Colors.blue,
-                              size: 16.0,
-                            ),
+                            if (postsUsersModel.verifiedBadge!)
+                              Icon(
+                                Icons.check_circle,
+                                color: Colors.blue,
+                                size: 16.0,
+                              ),
                           ],
                         ),
                         Text(
-                          'January 21, 2021 at 11:00 pm',
+                          '${postModel.postDateTime}',
                           style: Theme.of(context).textTheme.caption?.copyWith(
                                 height: 1.4,
                               ),
@@ -137,7 +168,7 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Tristique sollicitudin nibh sit amet. Massa placerat duis ultricies lacus sed. Metus dictum at tempor commodo ullamcorper a lacus vestibulum sed. Mi sit amet mauris commodo quis imperdiet. Amet luctus venenatis lectus magna fringilla urna porttitor rhoncus. Adipiscing elit pellentesque habitant morbi tristique senectus et. Euismod in pellentesque massa placerat. Eget lorem dolor sed viverra ipsum nunc aliquet.',
+                '${postModel.postText}',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
               Padding(
@@ -145,42 +176,46 @@ class HomeScreen extends StatelessWidget {
                   bottom: 10.0,
                   top: 5.0,
                 ),
-                child: Container(
-                  width: double.infinity,
-                  child: Wrap(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(
-                          end: 6.0,
+                // child: Container(
+                //   width: double.infinity,
+                //   child: Wrap(
+                //     children: [
+                //       Padding(
+                //         padding: const EdgeInsetsDirectional.only(
+                //           end: 6.0,
+                //         ),
+                //         child: InkWell(
+                //           onTap: () {},
+                //           child: Text(
+                //             '#Valorent',
+                //             style:
+                //                 Theme.of(context).textTheme.subtitle1?.copyWith(
+                //                       color: Colors.blue,
+                //                     ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
+              ),
+              if (postModel.postImage != ' ')
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: 140.0,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      image: DecorationImage(
+                        image: NetworkImage(
+                          '${postModel.postImage}',
                         ),
-                        child: InkWell(
-                          onTap: () {},
-                          child: Text(
-                            '#Valorent',
-                            style:
-                                Theme.of(context).textTheme.subtitle1?.copyWith(
-                                      color: Colors.blue,
-                                    ),
-                          ),
-                        ),
+                        fit: BoxFit.cover,
                       ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
-                width: double.infinity,
-                height: 140.0,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4.0),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      'https://images.hdqwalls.com/download/valorant-2020-5k-dq-1920x1080.jpg',
                     ),
-                    fit: BoxFit.cover,
                   ),
                 ),
-              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5.0),
                 child: Row(
@@ -199,7 +234,7 @@ class HomeScreen extends StatelessWidget {
                               width: 5.0,
                             ),
                             Text(
-                              '120',
+                              '${AppCubit.get(context).likesCounter[index]}',
                               style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ],
@@ -212,7 +247,7 @@ class HomeScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          '360 comments',
+                          '${AppCubit.get(context).commentsCounter[index]} comments',
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
@@ -229,7 +264,9 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        AppCubit.get(context).likePost(postId);
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -256,7 +293,16 @@ class HomeScreen extends StatelessWidget {
                   ),
                   Expanded(
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        AppCubit.get(context).getCommentsData(postId);
+                        navigateTo(
+                          context: context,
+                          newRoute: CommentsScreen(
+                            postId: postId,
+                          ),
+                          backRoute: true,
+                        );
+                      },
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -279,33 +325,6 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10.0),
-                child: Container(
-                  height: 1.0,
-                  color: Colors.grey[300],
-                ),
-              ),
-              InkWell(
-                onTap: () {},
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 15.0,
-                      backgroundImage: NetworkImage(model.image!),
-                    ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Expanded(
-                      child: Text(
-                        'Write a comment ...',
-                        style: Theme.of(context).textTheme.caption?.copyWith(),
-                      ),
-                    ),
-                  ],
-                ),
               ),
             ],
           ),

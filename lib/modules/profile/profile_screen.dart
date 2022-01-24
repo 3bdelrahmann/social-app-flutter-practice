@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/modules/edit_profile/edit_profile_screen.dart';
+import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/cubit/states.dart';
 import 'package:social_app/shared/styles/icon_broken.dart';
@@ -62,14 +63,16 @@ class ProfileScreen extends StatelessWidget {
                         cubit.userModel!.name!,
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Icon(
-                        Icons.check_circle,
-                        color: Colors.blue,
-                        size: 16.0,
-                      ),
+                      if (cubit.userModel!.verifiedBadge!)
+                        SizedBox(
+                          width: 5.0,
+                        ),
+                      if (cubit.userModel!.verifiedBadge!)
+                        Icon(
+                          Icons.check_circle,
+                          color: Colors.blue,
+                          size: 16.0,
+                        ),
                     ],
                   ),
                   Text(
@@ -166,14 +169,14 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       OutlinedButton(
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => EditProfileScreen(),
-                          );
-                          // navigateTo(
-                          //     context: context,
-                          //     newRoute: EditProfileScreen(),
-                          //     backRoute: true);
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (context) => EditProfileScreen(),
+                          // );
+                          navigateTo(
+                              context: context,
+                              newRoute: EditProfileScreen(),
+                              backRoute: true);
                         },
                         child: Icon(
                           IconBroken.Edit,
