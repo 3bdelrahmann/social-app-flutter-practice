@@ -99,3 +99,23 @@ class AppGetCommentsOnFailedState extends AppStates {
 
   AppGetCommentsOnFailedState(this.error);
 }
+
+//Get all users
+
+class AppGetAllUserOnLoadingState extends AppStates {}
+
+class AppGetAllUserOnSuccessState extends AppStates {}
+
+class AppGetAllUserOnFailedState extends AppStates {
+  final String error;
+
+  AppGetAllUserOnFailedState(this.error);
+}
+
+//Chat
+
+class AppSendMessageOnSuccessState extends AppStates {}
+
+class AppSendMessageOnFailedState extends AppStates {}
+
+class AppGetMessageOnSuccessState extends AppStates {}

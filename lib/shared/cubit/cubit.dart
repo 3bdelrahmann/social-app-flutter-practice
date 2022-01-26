@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/comments_model.dart';
+import 'package:social_app/models/message_model.dart';
 import 'package:social_app/models/post_model.dart';
 import 'package:social_app/models/user_model.dart';
 import 'package:social_app/modules/chats/chats_screen.dart';
@@ -57,6 +58,9 @@ class AppCubit extends Cubit<AppStates> {
   ];
 
   void ChangeNavBar(int index) {
+    if (index == 1) {
+      getAllUsers();
+    }
     currentIndex = index;
     emit(AppChangeNavBarState());
   }
@@ -168,7 +172,7 @@ class AppCubit extends Cubit<AppStates> {
         .update(model.toMap())
         .then((value) {
       getUserData();
-      getPostData();
+      getPostsData();
       showToast(
         text: 'Saved successfully',
         states: ToastStates.SUCCESS,
@@ -243,7 +247,8 @@ class AppCubit extends Cubit<AppStates> {
         .collection('posts')
         .add(model.toMap())
         .then((value) {
-      getPostData();
+      getPostsData();
+      removePostImage();
       Navigator.pop(context);
       emit(AppCreatePostOnSuccessState());
     }).catchError((error) {
@@ -256,20 +261,20 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppRemovePostImageState());
   }
 
-  List<PostModel> posts = [];
-  List<UserModel> postsUsers = [];
-  List<String> postsId = [];
-  List<int> likesCounter = [];
-  List<int> commentsCounter = [];
+  List<PostModel>? posts;
+  List<UserModel>? postsUsers;
+  List<String>? postsId;
+  List<int>? likesCounter;
+  List<int>? commentsCounter;
 
-  void getPostData() {
+  void getPostsData() {
     emit(AppGetPostOnLoadingState());
-
     FirebaseFirestore.instance.collection('posts').get().then((value) {
       posts = [];
       postsUsers = [];
       postsId = [];
-
+      likesCounter = [];
+      commentsCounter = [];
       value.docs.forEach((element) {
         //get posts users
         FirebaseFirestore.instance
@@ -285,11 +290,11 @@ class AppCubit extends Cubit<AppStates> {
                 .get()
                 .then((commentsValue) {
               //get comments data
-              commentsCounter.add(commentsValue.docs.length);
-              likesCounter.add(likesValue.docs.length);
-              postsUsers.add(UserModel.fromJson(postsUsersValue.data()!));
-              posts.add(PostModel.fromJson(element.data()));
-              postsId.add(element.id);
+              commentsCounter?.add(commentsValue.docs.length);
+              likesCounter?.add(likesValue.docs.length);
+              postsUsers?.add(UserModel.fromJson(postsUsersValue.data()!));
+              posts?.add(PostModel.fromJson(element.data()));
+              postsId?.add(element.id);
             }).catchError((error) {
               emit(AppGetPostOnFailedState(error.toString()));
             });
@@ -332,17 +337,18 @@ class AppCubit extends Cubit<AppStates> {
         .collection('comments')
         .add(model.toMap())
         .then((value) {
-      getPostData();
-      // emit(AppCommentOnPostOnSuccessState());
+      emit(AppCommentOnPostOnSuccessState());
     }).catchError((error) {
       emit(AppCommentOnPostOnFailedState(error));
     });
   }
 
-  List<CommentsModel> comments = [];
-  List<UserModel> commentsUsers = [];
+  List<CommentsModel>? comments;
+  List<UserModel>? commentsUsers;
   void getCommentsData(String postId) {
     emit(AppGetCommentsOnLoadingState());
+    comments = [];
+    commentsUsers = [];
     FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
@@ -356,8 +362,8 @@ class AppCubit extends Cubit<AppStates> {
             .doc(element.get('uId'))
             .get()
             .then((commentsUsersValue) {
-          commentsUsers.add(UserModel.fromJson(commentsUsersValue.data()!));
-          comments.add(CommentsModel.fromJson(element.data()));
+          commentsUsers?.add(UserModel.fromJson(commentsUsersValue.data()!));
+          comments?.add(CommentsModel.fromJson(element.data()));
         }).catchError((error) {
           emit(AppGetCommentsOnFailedState(error.toString()));
         });
@@ -365,6 +371,82 @@ class AppCubit extends Cubit<AppStates> {
       emit(AppGetCommentsOnSuccessState());
     }).catchError((error) {
       emit(AppGetCommentsOnFailedState(error.toString()));
+    });
+  }
+
+  List<UserModel> users = [];
+  void getAllUsers() {
+    emit(AppGetAllUserOnLoadingState());
+    if (users.isEmpty) {
+      FirebaseFirestore.instance.collection('users').get().then((value) {
+        value.docs.forEach((element) {
+          if (element.data()['uId'] != userModel?.uId) {
+            users.add(UserModel.fromJson(element.data()));
+          }
+          emit(AppGetAllUserOnSuccessState());
+        });
+      }).catchError((error) {
+        emit(AppGetAllUserOnFailedState(error.toString()));
+      });
+    }
+  }
+
+  void sendMessage({
+    required String receiverId,
+    required String text,
+  }) {
+    MessageModel model = MessageModel(
+      receiverId: receiverId,
+      senderId: userModel!.uId,
+      text: text,
+      dateTime: Timestamp.fromDate(DateTime.now()),
+    );
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(model.senderId)
+        .collection('chats')
+        .doc(model.receiverId)
+        .collection('messages')
+        .add(model.toMap())
+        .then((value) {
+      emit(AppSendMessageOnSuccessState());
+    }).catchError((error) {
+      emit(AppSendMessageOnFailedState());
+    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(model.receiverId)
+        .collection('chats')
+        .doc(model.senderId)
+        .collection('messages')
+        .add(model.toMap())
+        .then((value) {
+      emit(AppSendMessageOnSuccessState());
+    }).catchError((error) {
+      emit(AppSendMessageOnFailedState());
+    });
+  }
+
+  List<MessageModel> messages = [];
+  void getMessage({
+    required String receiverId,
+  }) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel!.uId)
+        .collection('chats')
+        .doc(receiverId)
+        .collection('messages')
+        .orderBy('dateTime')
+        .snapshots()
+        .listen((event) {
+      messages = [];
+      event.docs.forEach((element) {
+        messages.add(MessageModel.fromJson(element.data()));
+
+        emit(AppGetMessageOnSuccessState());
+      });
     });
   }
 }

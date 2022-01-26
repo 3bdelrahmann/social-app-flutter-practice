@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) => ConditionalBuilder(
-        condition: cubit.posts.length > 0 && cubit.postsUsers.length > 0,
+        condition: cubit.userModel != null,
         builder: (context) => SingleChildScrollView(
           physics: BouncingScrollPhysics(),
           child: Column(
@@ -74,14 +74,14 @@ class HomeScreen extends StatelessWidget {
                   physics: NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) => buildPostsItem(
                       context: context,
-                      postModel: cubit.posts[index],
-                      postsUsersModel: cubit.postsUsers[index],
-                      postId: cubit.postsId[index],
+                      postModel: cubit.posts![index],
+                      postsUsersModel: cubit.postsUsers![index],
+                      postId: cubit.postsId![index],
                       index: index),
                   separatorBuilder: (context, index) => SizedBox(
                         height: 8.0,
                       ),
-                  itemCount: cubit.posts.length),
+                  itemCount: cubit.posts!.length),
               SizedBox(
                 height: 8.0,
               ),
@@ -234,7 +234,7 @@ class HomeScreen extends StatelessWidget {
                               width: 5.0,
                             ),
                             Text(
-                              '${AppCubit.get(context).likesCounter[index]}',
+                              '${AppCubit.get(context).likesCounter![index]}',
                               style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ],
@@ -247,7 +247,7 @@ class HomeScreen extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          '${AppCubit.get(context).commentsCounter[index]} comments',
+                          '${AppCubit.get(context).commentsCounter![index]} comments',
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),

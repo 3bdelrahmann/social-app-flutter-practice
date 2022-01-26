@@ -53,7 +53,7 @@ class SocialApp extends StatelessWidget {
           BlocProvider(
               create: (BuildContext context) => AppCubit()
                 ..getUserData()
-                ..getPostData())
+                ..getPostsData())
         ],
         child: BlocConsumer<AppCubit, AppStates>(
             listener: (context, state) {},
