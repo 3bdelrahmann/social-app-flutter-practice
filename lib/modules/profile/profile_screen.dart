@@ -29,8 +29,8 @@ class ProfileScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 140.0,
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(4.0),
+                              borderRadius: const BorderRadius.only(
+                                topLeft: const Radius.circular(4.0),
                                 topRight: Radius.circular(4.0),
                               ),
                               image: DecorationImage(
@@ -53,7 +53,7 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 5.0,
                   ),
                   Row(
@@ -64,11 +64,11 @@ class ProfileScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       if (cubit.userModel!.verifiedBadge!)
-                        SizedBox(
+                        const SizedBox(
                           width: 5.0,
                         ),
                       if (cubit.userModel!.verifiedBadge!)
-                        Icon(
+                        const Icon(
                           Icons.check_circle,
                           color: Colors.blue,
                           size: 16.0,
@@ -159,12 +159,12 @@ class ProfileScreen extends StatelessWidget {
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () {},
-                          child: Text(
+                          child: const Text(
                             'Add Photos',
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 10.0,
                       ),
                       OutlinedButton(
@@ -178,7 +178,7 @@ class ProfileScreen extends StatelessWidget {
                               newRoute: EditProfileScreen(),
                               backRoute: true);
                         },
-                        child: Icon(
+                        child: const Icon(
                           IconBroken.Edit,
                           size: 16.0,
                         ),

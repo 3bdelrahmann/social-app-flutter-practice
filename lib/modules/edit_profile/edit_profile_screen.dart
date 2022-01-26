@@ -28,9 +28,9 @@ class EditProfileScreen extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: Text('Edit Profile'),
+            title: const Text('Edit Profile'),
             leading: IconButton(
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -47,7 +47,7 @@ class EditProfileScreen extends StatelessWidget {
                 },
                 text: 'save',
               ),
-              SizedBox(
+              const SizedBox(
                 width: 12.0,
               ),
             ],
@@ -57,7 +57,7 @@ class EditProfileScreen extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  Container(
+                  SizedBox(
                     height: 190.0,
                     child: Stack(
                       alignment: Alignment.bottomCenter,
@@ -72,7 +72,7 @@ class EditProfileScreen extends StatelessWidget {
                                   width: double.infinity,
                                   height: 140.0,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
+                                    borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(4.0),
                                       topRight: Radius.circular(4.0),
                                     ),
@@ -87,7 +87,7 @@ class EditProfileScreen extends StatelessWidget {
                                   width: double.infinity,
                                   height: 140.0,
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.only(
+                                    borderRadius: const BorderRadius.only(
                                       topLeft: Radius.circular(4.0),
                                       topRight: Radius.circular(4.0),
                                     ),
@@ -107,7 +107,7 @@ class EditProfileScreen extends StatelessWidget {
                                     radius: 25.0,
                                     backgroundColor:
                                         Colors.black.withOpacity(0.5),
-                                    child: Icon(
+                                    child: const Icon(
                                       IconBroken.Camera,
                                       color: Colors.white,
                                       size: 25.0,
@@ -149,7 +149,7 @@ class EditProfileScreen extends StatelessWidget {
                               child: CircleAvatar(
                                 radius: 25.0,
                                 backgroundColor: Colors.black.withOpacity(0.5),
-                                child: Icon(
+                                child: const Icon(
                                   IconBroken.Camera,
                                   color: Colors.white,
                                   size: 25.0,
@@ -161,7 +161,7 @@ class EditProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   if (profileImage != null || coverImage != null)
@@ -185,11 +185,11 @@ class EditProfileScreen extends StatelessWidget {
                                 ),
                                 if (state ==
                                     AppUploadProfileImageOnLoadingState())
-                                  LinearProgressIndicator(),
+                                  const LinearProgressIndicator(),
                               ],
                             ),
                           ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5.0,
                         ),
                         if (coverImage != null)
@@ -210,13 +210,13 @@ class EditProfileScreen extends StatelessWidget {
                                 ),
                                 if (state ==
                                     AppUploadCoverImageOnLoadingState())
-                                  LinearProgressIndicator(),
+                                  const LinearProgressIndicator(),
                               ],
                             ),
                           ),
                       ],
                     ),
-                  SizedBox(
+                  const SizedBox(
                     height: 20.0,
                   ),
                   Padding(
@@ -235,7 +235,7 @@ class EditProfileScreen extends StatelessWidget {
                             label: 'Name',
                             radius: 0.0,
                             filled: false),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         defaultFormField(
@@ -250,7 +250,7 @@ class EditProfileScreen extends StatelessWidget {
                             label: 'Bio',
                             radius: 0.0,
                             filled: false),
-                        SizedBox(
+                        const SizedBox(
                           height: 15.0,
                         ),
                         defaultFormField(

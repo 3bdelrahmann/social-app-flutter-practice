@@ -1,5 +1,4 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/post_model.dart';
@@ -17,82 +16,86 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
-    return BlocConsumer<AppCubit, AppStates>(
-      listener: (context, state) {},
-      builder: (context, state) => ConditionalBuilder(
-        condition: cubit.userModel != null,
-        builder: (context) => SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              Card(
-                elevation: 5.0,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                margin: EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 24.0,
-                        backgroundImage: NetworkImage(cubit.userModel!.image!),
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: InkWell(
-                          onTap: () {
-                            navigateTo(
-                              context: context,
-                              newRoute: AddPostScreen(),
-                              backRoute: true,
-                            );
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(15.0),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30.0),
-                              color: Colors.grey[200],
-                            ),
-                            child: Text(
-                              'What\'s in your mind?',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(),
+    return Builder(builder: (BuildContext context) {
+      cubit.getPostsData();
+      return BlocConsumer<AppCubit, AppStates>(
+        listener: (context, state) {},
+        builder: (context, state) => ConditionalBuilder(
+          condition: cubit.userModel != null && cubit.posts.isNotEmpty,
+          builder: (context) => SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              children: [
+                Card(
+                  elevation: 5.0,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  margin: const EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 24.0,
+                          backgroundImage:
+                              NetworkImage(cubit.userModel!.image!),
+                        ),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              navigateTo(
+                                context: context,
+                                newRoute: AddPostScreen(),
+                                backRoute: true,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30.0),
+                                color: Colors.grey[200],
+                              ),
+                              child: Text(
+                                'What\'s in your mind?',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .caption
+                                    ?.copyWith(),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              ListView.separated(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemBuilder: (context, index) => buildPostsItem(
-                      context: context,
-                      postModel: cubit.posts![index],
-                      postsUsersModel: cubit.postsUsers![index],
-                      postId: cubit.postsId![index],
-                      index: index),
-                  separatorBuilder: (context, index) => SizedBox(
-                        height: 8.0,
-                      ),
-                  itemCount: cubit.posts!.length),
-              SizedBox(
-                height: 8.0,
-              ),
-            ],
+                ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => buildPostsItem(
+                        context: context,
+                        postModel: cubit.posts[index],
+                        postsUsersModel: cubit.postsUsers[index],
+                        postId: cubit.postsId[index],
+                        index: index),
+                    separatorBuilder: (context, index) => const SizedBox(
+                          height: 8.0,
+                        ),
+                    itemCount: cubit.posts.length),
+                const SizedBox(
+                  height: 8.0,
+                ),
+              ],
+            ),
+          ),
+          fallback: (context) => const Center(
+            child: CircularProgressIndicator(),
           ),
         ),
-        fallback: (context) => Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
+      );
+    });
   }
 
   Widget buildPostsItem({
@@ -105,7 +108,7 @@ class HomeScreen extends StatelessWidget {
       Card(
         elevation: 5.0,
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        margin: EdgeInsets.all(8.0),
+        margin: const EdgeInsets.all(8.0),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -117,7 +120,7 @@ class HomeScreen extends StatelessWidget {
                     radius: 30.0,
                     backgroundImage: NetworkImage(postsUsersModel.image!),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 20.0,
                   ),
                   Expanded(
@@ -128,15 +131,15 @@ class HomeScreen extends StatelessWidget {
                           children: [
                             Text(
                               postsUsersModel.name!,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 height: 1.4,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5.0,
                             ),
                             if (postsUsersModel.verifiedBadge!)
-                              Icon(
+                              const Icon(
                                 Icons.check_circle,
                                 color: Colors.blue,
                                 size: 16.0,
@@ -153,7 +156,7 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: Icon(Icons.more_horiz),
+                    icon: const Icon(Icons.more_horiz),
                     onPressed: () {},
                   ),
                 ],
@@ -171,8 +174,8 @@ class HomeScreen extends StatelessWidget {
                 '${postModel.postText}',
                 style: Theme.of(context).textTheme.subtitle1,
               ),
-              Padding(
-                padding: const EdgeInsets.only(
+              const Padding(
+                padding: EdgeInsets.only(
                   bottom: 10.0,
                   top: 5.0,
                 ),
@@ -225,16 +228,16 @@ class HomeScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Row(
                           children: [
-                            Icon(
+                            const Icon(
                               IconBroken.Heart,
                               color: Colors.red,
                               size: 16.0,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5.0,
                             ),
                             Text(
-                              '${AppCubit.get(context).likesCounter![index]}',
+                              '${AppCubit.get(context).likesCounter[index]}',
                               style: Theme.of(context).textTheme.subtitle1,
                             ),
                           ],
@@ -242,12 +245,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                       onTap: () {},
                     ),
-                    Spacer(),
+                    const Spacer(),
                     InkWell(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Text(
-                          '${AppCubit.get(context).commentsCounter![index]} comments',
+                          '${AppCubit.get(context).commentsCounter[index]} comments',
                           style: Theme.of(context).textTheme.subtitle1,
                         ),
                       ),
@@ -274,7 +277,7 @@ class HomeScreen extends StatelessWidget {
                             Icons.thumb_up_alt_outlined,
                             color: Colors.grey[800],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5.0,
                           ),
                           Text(
@@ -288,13 +291,12 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 5.0,
                   ),
                   Expanded(
                     child: TextButton(
                       onPressed: () {
-                        AppCubit.get(context).getCommentsData(postId);
                         navigateTo(
                           context: context,
                           newRoute: CommentsScreen(
@@ -310,7 +312,7 @@ class HomeScreen extends StatelessWidget {
                             Icons.comment,
                             color: Colors.grey[800],
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 5.0,
                           ),
                           Text(

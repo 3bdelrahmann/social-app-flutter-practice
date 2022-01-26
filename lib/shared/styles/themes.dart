@@ -7,7 +7,7 @@ import 'colors.dart';
 ThemeData lightTheme = ThemeData(
   primarySwatch: kMainColor,
   scaffoldBackgroundColor: Colors.white,
-  appBarTheme: AppBarTheme(
+  appBarTheme: const AppBarTheme(
       centerTitle: false,
       titleSpacing: 20.0,
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -22,14 +22,14 @@ ThemeData lightTheme = ThemeData(
         fontWeight: FontWeight.bold,
       ),
       iconTheme: IconThemeData(color: Colors.black)),
-  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+  bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     type: BottomNavigationBarType.fixed,
     backgroundColor: Colors.white,
     elevation: 20.0,
     selectedItemColor: kMainColor,
     unselectedItemColor: Colors.grey,
   ),
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     bodyText1: TextStyle(
       fontFamily: 'Jannah',
       fontSize: 18.0,
@@ -56,12 +56,12 @@ ThemeData darkTheme = ThemeData(
       ),
       backgroundColor: HexColor('#121212'),
       elevation: 0.0,
-      titleTextStyle: TextStyle(
+      titleTextStyle: const TextStyle(
         color: Colors.white,
         fontSize: 20.0,
         fontWeight: FontWeight.bold,
       ),
-      iconTheme: IconThemeData(color: Colors.white)),
+      iconTheme: const IconThemeData(color: Colors.white)),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     type: BottomNavigationBarType.fixed,
     backgroundColor: HexColor('#121212'),
@@ -69,7 +69,7 @@ ThemeData darkTheme = ThemeData(
     selectedItemColor: kMainColor,
     unselectedItemColor: Colors.grey,
   ),
-  textTheme: TextTheme(
+  textTheme: const TextTheme(
     bodyText1: TextStyle(
       fontFamily: 'Jannah',
       fontSize: 18.0,

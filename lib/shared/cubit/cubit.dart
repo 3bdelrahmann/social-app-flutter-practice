@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -36,7 +35,6 @@ class AppCubit extends Cubit<AppStates> {
       userModel = UserModel.fromJson(value.data()!);
       emit(AppGetUserOnSuccessState());
     }).catchError((error) {
-      print(error.toString());
       emit(AppGetUserOnFailedState(error.toString()));
     });
   }
@@ -44,10 +42,10 @@ class AppCubit extends Cubit<AppStates> {
   int currentIndex = 0;
 
   List<Widget> screens = [
-    HomeScreen(),
-    ChatsScreen(),
-    NearbyScreen(),
-    ProfileScreen(),
+    const HomeScreen(),
+    const ChatsScreen(),
+    const NearbyScreen(),
+    const ProfileScreen(),
   ];
 
   List<String> titles = [
@@ -57,7 +55,7 @@ class AppCubit extends Cubit<AppStates> {
     'Profile',
   ];
 
-  void ChangeNavBar(int index) {
+  void changeNavBar(int index) {
     if (index == 1) {
       getAllUsers();
     }
@@ -99,7 +97,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/${userId}/profiles/${Uri.file(profileImage!.path).pathSegments.last}',
+          'users/$userId/profiles/${Uri.file(profileImage!.path).pathSegments.last}',
         )
         .putFile(profileImage!)
         .then((value) {
@@ -129,7 +127,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/${userId}/covers/${Uri.file(coverImage!.path).pathSegments.last}',
+          'users/$userId/covers/${Uri.file(coverImage!.path).pathSegments.last}',
         )
         .putFile(coverImage!)
         .then((value) {
@@ -172,7 +170,6 @@ class AppCubit extends Cubit<AppStates> {
         .update(model.toMap())
         .then((value) {
       getUserData();
-      getPostsData();
       showToast(
         text: 'Saved successfully',
         states: ToastStates.SUCCESS,
@@ -205,7 +202,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/${userId}/posts/${Uri.file(postImageFile!.path).pathSegments.last}',
+          'users/$userId/posts/${Uri.file(postImageFile!.path).pathSegments.last}',
         )
         .putFile(postImageFile!)
         .then((value) {
@@ -247,7 +244,6 @@ class AppCubit extends Cubit<AppStates> {
         .collection('posts')
         .add(model.toMap())
         .then((value) {
-      getPostsData();
       removePostImage();
       Navigator.pop(context);
       emit(AppCreatePostOnSuccessState());
@@ -261,54 +257,53 @@ class AppCubit extends Cubit<AppStates> {
     emit(AppRemovePostImageState());
   }
 
-  List<PostModel>? posts;
-  List<UserModel>? postsUsers;
-  List<String>? postsId;
-  List<int>? likesCounter;
-  List<int>? commentsCounter;
+  List<PostModel> posts = [];
+  List<UserModel> postsUsers = [];
+  List<String> postsId = [];
+  List<int> likesCounter = [];
+  List<int> commentsCounter = [];
 
   void getPostsData() {
     emit(AppGetPostOnLoadingState());
-    FirebaseFirestore.instance.collection('posts').get().then((value) {
+
+    FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('postDateTime')
+        .snapshots()
+        .listen((event) {
       posts = [];
       postsUsers = [];
       postsId = [];
       likesCounter = [];
       commentsCounter = [];
-      value.docs.forEach((element) {
+      event.docs.forEach((element) {
         //get posts users
         FirebaseFirestore.instance
             .collection('users')
             .doc(element.get('uId'))
-            .get()
-            .then((postsUsersValue) {
+            .snapshots()
+            .listen((postsUsersEvent) {
           //get likes counter
-          element.reference.collection('likes').get().then((likesValue) {
+          element.reference
+              .collection('likes')
+              .snapshots()
+              .listen((likesEvent) {
             //get comments counter
             element.reference
                 .collection('comments')
-                .get()
-                .then((commentsValue) {
+                .snapshots()
+                .listen((commentsEvent) {
               //get comments data
-              commentsCounter?.add(commentsValue.docs.length);
-              likesCounter?.add(likesValue.docs.length);
-              postsUsers?.add(UserModel.fromJson(postsUsersValue.data()!));
-              posts?.add(PostModel.fromJson(element.data()));
-              postsId?.add(element.id);
-            }).catchError((error) {
-              emit(AppGetPostOnFailedState(error.toString()));
+              commentsCounter.add(commentsEvent.docs.length);
+              likesCounter.add(likesEvent.docs.length);
+              postsUsers.add(UserModel.fromJson(postsUsersEvent.data()!));
+              posts.add(PostModel.fromJson(element.data()));
+              postsId.add(element.id);
+              emit(AppGetPostOnSuccessState());
             });
-          }).catchError((error) {
-            emit(AppGetPostOnFailedState(error.toString()));
           });
-        }).catchError((error) {
-          emit(AppGetPostOnFailedState(error.toString()));
         });
       });
-      emit(AppGetPostOnSuccessState());
-    }).catchError((error) {
-      print(error.toString());
-      emit(AppGetPostOnFailedState(error.toString()));
     });
   }
 
@@ -330,6 +325,7 @@ class AppCubit extends Cubit<AppStates> {
       text: text,
       created: Timestamp.fromDate(DateTime.now()),
       uId: userModel!.uId,
+      uName: userModel!.name,
     );
     FirebaseFirestore.instance
         .collection('posts')
@@ -343,34 +339,21 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
-  List<CommentsModel>? comments;
-  List<UserModel>? commentsUsers;
-  void getCommentsData(String postId) {
-    emit(AppGetCommentsOnLoadingState());
-    comments = [];
-    commentsUsers = [];
+  List<CommentsModel> comments = [];
+  void getCommentsData({required String postId}) {
     FirebaseFirestore.instance
         .collection('posts')
         .doc(postId)
         .collection('comments')
-        .get()
-        .then((value) {
+        .orderBy('created')
+        .snapshots()
+        .listen((event) {
+      comments = [];
       //Get each comment in the doc
-      value.docs.forEach((element) {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(element.get('uId'))
-            .get()
-            .then((commentsUsersValue) {
-          commentsUsers?.add(UserModel.fromJson(commentsUsersValue.data()!));
-          comments?.add(CommentsModel.fromJson(element.data()));
-        }).catchError((error) {
-          emit(AppGetCommentsOnFailedState(error.toString()));
-        });
+      event.docs.forEach((element) {
+        comments.add(CommentsModel.fromJson(element.data()));
       });
       emit(AppGetCommentsOnSuccessState());
-    }).catchError((error) {
-      emit(AppGetCommentsOnFailedState(error.toString()));
     });
   }
 

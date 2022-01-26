@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:social_app/shared/styles/colors.dart';
@@ -102,29 +101,29 @@ Widget entryBuilder({
       children: [
         Expanded(
             child: Container(
-          margin: EdgeInsets.only(bottom: 10.0),
+          margin: const EdgeInsets.only(bottom: 10.0),
           width: double.infinity,
           child: Center(
             child: Text(
               title.toUpperCase(),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 40.0,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
           ),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: kMainColor,
             borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(180),
+              bottom: const Radius.circular(180),
             ),
           ),
         )),
         Expanded(
             flex: 3,
             child: Container(
-              padding: EdgeInsets.all(30.0),
+              padding: const EdgeInsets.all(30.0),
               child: Center(
                 child: SingleChildScrollView(
                   child: Form(
@@ -155,7 +154,7 @@ Widget defaultButton({
         onPressed: onPressed,
         child: Text(
           text.toUpperCase(),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
           ),
         ),
@@ -228,16 +227,16 @@ Widget roundIconButton({
       fillColor: color,
     );
 Widget verifyEmailNotifier() => Container(
-      padding: EdgeInsets.symmetric(horizontal: 15.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
       color: Colors.amber.withOpacity(0.8),
       child: Row(
         children: [
-          Icon(Icons.info_outline),
-          SizedBox(
+          const Icon(Icons.info_outline),
+          const SizedBox(
             width: 15.0,
           ),
-          Expanded(
-            child: Text('Please verify your email'),
+          const Expanded(
+            child: const Text('Please verify your email'),
           ),
           defaultTextButton(
               onPressed: () {

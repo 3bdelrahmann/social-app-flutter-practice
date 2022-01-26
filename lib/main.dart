@@ -51,9 +51,7 @@ class SocialApp extends StatelessWidget {
             create: (BuildContext context) => RegisterCubit(),
           ),
           BlocProvider(
-              create: (BuildContext context) => AppCubit()
-                ..getUserData()
-                ..getPostsData())
+              create: (BuildContext context) => AppCubit()..getUserData())
         ],
         child: BlocConsumer<AppCubit, AppStates>(
             listener: (context, state) {},
@@ -64,9 +62,10 @@ class SocialApp extends StatelessWidget {
                       condition: onBoarding,
                       builder: (BuildContext context) => ConditionalBuilder(
                           condition: userId != ' ',
-                          builder: (BuildContext context) => MainLayout(),
+                          builder: (BuildContext context) => const MainLayout(),
                           fallback: (BuildContext context) => LoginScreen()),
-                      fallback: (BuildContext context) => OnBoardingScreen()),
+                      fallback: (BuildContext context) =>
+                          const OnBoardingScreen()),
                 )));
   }
 }

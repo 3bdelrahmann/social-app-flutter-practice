@@ -82,7 +82,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
             Expanded(
               child: PageView.builder(
                 controller: onBoardingController,
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 onPageChanged: (index) {
                   if (index == boarding.length - 1) {
                     setState(() {
@@ -99,7 +99,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 itemCount: boarding.length,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 40.0,
             ),
             Padding(
@@ -109,14 +109,14 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   SmoothPageIndicator(
                     controller: onBoardingController,
                     count: boarding.length,
-                    effect: ExpandingDotsEffect(
+                    effect: const ExpandingDotsEffect(
                       dotHeight: 10.0,
                       dotWidth: 10.0,
                       spacing: 5.0,
                       activeDotColor: kMainColor,
                     ),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   roundIconButton(
                     iconColor: Colors.white,
                     icon: Icons.arrow_forward_ios,
@@ -125,7 +125,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         submit();
                       } else {
                         onBoardingController.nextPage(
-                          duration: Duration(milliseconds: 750),
+                          duration: const Duration(milliseconds: 750),
                           curve: Curves.fastLinearToSlowEaseIn,
                         );
                       }
@@ -150,26 +150,26 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: SvgPicture.asset(
-                  '${model.image}',
+                  model.image,
                 ),
               ),
             ),
             Text(
-              '${model.title}',
-              style: TextStyle(
+              model.title,
+              style: const TextStyle(
                 fontSize: 24.0,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 15.0,
             ),
             Text(
-              '${model.body}',
-              style: TextStyle(
+              model.body,
+              style: const TextStyle(
                 fontSize: 14.0,
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 30.0,
             ),
           ],

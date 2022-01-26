@@ -62,12 +62,6 @@ class AppGetPostOnLoadingState extends AppStates {}
 
 class AppGetPostOnSuccessState extends AppStates {}
 
-class AppGetPostOnFailedState extends AppStates {
-  final String error;
-
-  AppGetPostOnFailedState(this.error);
-}
-
 //Like post
 
 class AppLikePostOnSuccessState extends AppStates {}
@@ -90,15 +84,7 @@ class AppCommentOnPostOnFailedState extends AppStates {
 
 //Get comments
 
-class AppGetCommentsOnLoadingState extends AppStates {}
-
 class AppGetCommentsOnSuccessState extends AppStates {}
-
-class AppGetCommentsOnFailedState extends AppStates {
-  final String error;
-
-  AppGetCommentsOnFailedState(this.error);
-}
 
 //Get all users
 
@@ -119,3 +105,9 @@ class AppSendMessageOnSuccessState extends AppStates {}
 class AppSendMessageOnFailedState extends AppStates {}
 
 class AppGetMessageOnSuccessState extends AppStates {}
+
+// Get user by ID
+
+class AppGetUserByIdOnSuccessState extends AppStates {}
+
+class AppGetUserByIdOnFailedState extends AppStates {}

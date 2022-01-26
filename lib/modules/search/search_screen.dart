@@ -9,7 +9,7 @@ class SearchScreen extends StatelessWidget {
     return Center(
       child: Container(
         color: kMainColor,
-        child: Text(
+        child: const Text(
           'Search',
           style: TextStyle(
             color: Colors.white,

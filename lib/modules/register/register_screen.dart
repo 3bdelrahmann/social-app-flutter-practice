@@ -33,7 +33,7 @@ class RegisterScreen extends StatelessWidget {
               .then((value) {
             navigateTo(
               context: context,
-              newRoute: MainLayout(),
+              newRoute: const MainLayout(),
               backRoute: false,
             );
           }).catchError((error) {
@@ -49,7 +49,7 @@ class RegisterScreen extends StatelessWidget {
           key: formGlobalKey,
           title: 'Register',
           children: [
-            SizedBox(
+            const SizedBox(
               height: 10.0,
             ),
             defaultFormField(
@@ -61,7 +61,7 @@ class RegisterScreen extends StatelessWidget {
                 if (name!.isEmpty) return 'Complete all fields';
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             defaultFormField(
@@ -70,11 +70,12 @@ class RegisterScreen extends StatelessWidget {
               type: TextInputType.emailAddress,
               prefix: Icons.email,
               validate: (email) {
-                if (!isEmailValid(email.toString()))
+                if (!isEmailValid(email.toString())) {
                   return 'Enter a valid email address';
+                }
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             defaultFormField(
@@ -88,11 +89,12 @@ class RegisterScreen extends StatelessWidget {
               },
               prefix: Icons.lock,
               validate: (password) {
-                if (!isPasswordValid(password.toString()))
+                if (!isPasswordValid(password.toString())) {
                   return 'Enter a valid password';
+                }
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             defaultFormField(
@@ -104,7 +106,7 @@ class RegisterScreen extends StatelessWidget {
                 if (number!.isEmpty) return 'Complete all fields';
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 20.0,
             ),
             ConditionalBuilder(
@@ -123,15 +125,15 @@ class RegisterScreen extends StatelessWidget {
                 text: 'Register',
               ),
               fallback: (BuildContext context) =>
-                  Center(child: CircularProgressIndicator()),
+                  const Center(child: const CircularProgressIndicator()),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10.0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Already a member?',
                 ),
                 defaultTextButton(

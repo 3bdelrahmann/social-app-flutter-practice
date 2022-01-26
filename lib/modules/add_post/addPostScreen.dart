@@ -11,6 +11,8 @@ class AddPostScreen extends StatelessWidget {
   var postController = TextEditingController();
   String todayDate =
       DateFormat.yMMMMd('en_US').add_jm().format(DateTime.now()).toString();
+
+  AddPostScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
@@ -20,7 +22,7 @@ class AddPostScreen extends StatelessWidget {
         builder: (context, state) {
           return Scaffold(
             appBar: AppBar(
-              title: Text('Create a post'),
+              title: const Text('Create a post'),
               actions: [
                 defaultTextButton(
                   onPressed: () {
@@ -59,7 +61,7 @@ class AddPostScreen extends StatelessWidget {
                           backgroundImage:
                               NetworkImage(cubit.userModel!.image!),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 20.0,
                         ),
                         Column(
@@ -69,15 +71,15 @@ class AddPostScreen extends StatelessWidget {
                               children: [
                                 Text(
                                   cubit.userModel!.name!,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     height: 1.4,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 5.0,
                                 ),
                                 if (cubit.userModel!.verifiedBadge!)
-                                  Icon(
+                                  const Icon(
                                     Icons.check_circle,
                                     color: Colors.blue,
                                     size: 16.0,
@@ -101,7 +103,7 @@ class AddPostScreen extends StatelessWidget {
                         minLines: 1,
                         maxLines: 5,
                         keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             hintText: 'What\'s in your mind?',
                             border: InputBorder.none),
                       ),
@@ -133,7 +135,7 @@ class AddPostScreen extends StatelessWidget {
                                   radius: 25.0,
                                   backgroundColor:
                                       Colors.black.withOpacity(0.5),
-                                  child: Icon(
+                                  child: const Icon(
                                     Icons.close,
                                     color: Colors.white,
                                     size: 25.0,
@@ -153,7 +155,7 @@ class AddPostScreen extends StatelessWidget {
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                              children: const [
                                 Icon(IconBroken.Image),
                                 SizedBox(
                                   width: 5.0,
@@ -168,7 +170,7 @@ class AddPostScreen extends StatelessWidget {
                             onPressed: () {},
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
+                              children: const [
                                 Icon(Icons.tag),
                                 SizedBox(
                                   width: 5.0,

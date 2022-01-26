@@ -1,5 +1,4 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/models/message_model.dart';
@@ -32,7 +31,7 @@ class ChatDetailsScreen extends StatelessWidget {
                       radius: 20.0,
                       backgroundImage: NetworkImage(userModel.image!),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 15.0,
                     ),
                     Text(userModel.name!),
@@ -55,14 +54,15 @@ class ChatDetailsScreen extends StatelessWidget {
                                   }
                                   return receiverMessage(cubit.messages[index]);
                                 },
-                                separatorBuilder: (context, index) => SizedBox(
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(
                                       height: 15.0,
                                     ),
                                 itemCount: cubit.messages.length),
                           );
                         },
                         fallback: (BuildContext context) {
-                          return Expanded(
+                          return const Expanded(
                             child: Center(
                               child: CircularProgressIndicator(),
                             ),
@@ -85,7 +85,7 @@ class ChatDetailsScreen extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 15.0),
                               child: TextFormField(
                                 controller: messageController,
-                                decoration: InputDecoration(
+                                decoration: const InputDecoration(
                                   hintText: 'Write a message ...',
                                   border: InputBorder.none,
                                 ),
@@ -104,7 +104,7 @@ class ChatDetailsScreen extends StatelessWidget {
                                 messageController.clear();
                               },
                               minWidth: 1.0,
-                              child: Icon(
+                              child: const Icon(
                                 IconBroken.Send,
                                 size: 16.0,
                                 color: Colors.white,
@@ -127,12 +127,12 @@ class ChatDetailsScreen extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               color: kMainColor.withOpacity(0.2),
-              borderRadius: BorderRadiusDirectional.only(
+              borderRadius: const BorderRadiusDirectional.only(
                 topStart: Radius.circular(10.0),
                 topEnd: Radius.circular(10.0),
                 bottomStart: Radius.circular(10.0),
               )),
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 10.0,
             vertical: 5.0,
           ),
@@ -144,12 +144,12 @@ class ChatDetailsScreen extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
               color: Colors.grey[300],
-              borderRadius: BorderRadiusDirectional.only(
+              borderRadius: const BorderRadiusDirectional.only(
                 topStart: Radius.circular(10.0),
                 topEnd: Radius.circular(10.0),
                 bottomEnd: Radius.circular(10.0),
               )),
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: 10.0,
             vertical: 5.0,
           ),

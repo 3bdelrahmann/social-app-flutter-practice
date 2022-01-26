@@ -5,6 +5,8 @@ import 'package:social_app/shared/cubit/states.dart';
 import 'package:social_app/shared/styles/icon_broken.dart';
 
 class MainLayout extends StatelessWidget {
+  const MainLayout({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     AppCubit cubit = AppCubit.get(context);
@@ -16,18 +18,18 @@ class MainLayout extends StatelessWidget {
           title: Text(cubit.titles[cubit.currentIndex]),
           actions: [
             IconButton(
-              icon: Icon(IconBroken.Notification),
+              icon: const Icon(IconBroken.Notification),
               onPressed: () {},
             ),
             IconButton(
-              icon: Icon(IconBroken.Search),
+              icon: const Icon(IconBroken.Search),
               onPressed: () {},
             ),
           ],
         ),
         body: cubit.screens[cubit.currentIndex],
         bottomNavigationBar: BottomNavigationBar(
-          items: [
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(IconBroken.Home),
               label: 'Home',
@@ -46,7 +48,7 @@ class MainLayout extends StatelessWidget {
             ),
           ],
           onTap: (index) {
-            cubit.ChangeNavBar(index);
+            cubit.changeNavBar(index);
           },
           currentIndex: cubit.currentIndex,
         ),
