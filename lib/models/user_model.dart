@@ -8,6 +8,8 @@ class UserModel {
   String? bio;
   bool? isEmailVerified;
   bool? verifiedBadge;
+  double? latitude;
+  double? longitude;
 
   UserModel({
     this.name,
@@ -19,6 +21,8 @@ class UserModel {
     this.bio,
     this.isEmailVerified,
     this.verifiedBadge,
+    this.latitude,
+    this.longitude,
   });
 
   UserModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +35,8 @@ class UserModel {
     bio = json['bio'];
     isEmailVerified = json['isEmailVerified'];
     verifiedBadge = json['verifiedBadge'];
+    latitude = json['latitude'];
+    longitude = json['longitude'];
   }
 
   Map<String, dynamic> toMap() {
@@ -44,6 +50,8 @@ class UserModel {
       'bio': bio,
       'isEmailVerified': isEmailVerified,
       'verifiedBadge': verifiedBadge,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 }

@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/modules/login/cubit/cubit.dart';
 import 'package:social_app/modules/onBoarding/on_boarding_screen.dart';
 import 'package:social_app/modules/register/cubit/cubit.dart';
-import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/cubit.dart';
 import 'package:social_app/shared/cubit/states.dart';
 import 'package:social_app/shared/styles/themes.dart';
@@ -18,18 +17,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   BlocOverrides.runZoned(
     () {
+      LoginCubit();
       AppCubit();
+      RegisterCubit();
     },
     blocObserver: MyBlocObserver(),
   );
   await Firebase.initializeApp();
   await CacheHelper.init();
 
-  bool? onBoarding = CacheHelper.getData(key: 'onBoarding') ?? false;
-  userId = CacheHelper.getData(key: 'userId') ?? ' ';
   runApp(SocialApp(
-    onBoarding: onBoarding!,
-    userId: userId,
+    onBoarding: CacheHelper.getData(key: 'onBoarding') ?? false,
+    userId: CacheHelper.getData(key: 'userId') ?? ' ',
   ));
 }
 
@@ -61,7 +60,7 @@ class SocialApp extends StatelessWidget {
                   home: ConditionalBuilder(
                       condition: onBoarding,
                       builder: (BuildContext context) => ConditionalBuilder(
-                          condition: userId != ' ',
+                          condition: userId.trim().isNotEmpty,
                           builder: (BuildContext context) => const MainLayout(),
                           fallback: (BuildContext context) => LoginScreen()),
                       fallback: (BuildContext context) =>

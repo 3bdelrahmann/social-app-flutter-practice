@@ -28,12 +28,16 @@ dependencies:
   carousel_slider: ^4.0.0
   image_picker: ^0.8.4+4
   intl: ^0.17.0
+  geolocator: ^8.0.5
+  flutter_map: ^0.14.0
 
-#  Firebase
+
+  #  Firebase
   firebase_core: ^1.11.0
   firebase_auth: ^3.3.5
   cloud_firestore: ^3.1.6
   firebase_storage: ^10.2.5
+
 
 
 dev_dependencies:

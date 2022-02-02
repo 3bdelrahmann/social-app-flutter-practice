@@ -48,142 +48,137 @@ class AddPostScreen extends StatelessWidget {
                 ),
               ],
             ),
-            body: SingleChildScrollView(
-              child: Container(
-                height: 600.0,
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30.0,
-                          backgroundImage:
-                              NetworkImage(cubit.userModel!.image!),
-                        ),
-                        const SizedBox(
-                          width: 20.0,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  cubit.userModel!.name!,
-                                  style: const TextStyle(
-                                    height: 1.4,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 5.0,
-                                ),
-                                if (cubit.userModel!.verifiedBadge!)
-                                  const Icon(
-                                    Icons.check_circle,
-                                    color: Colors.blue,
-                                    size: 16.0,
-                                  ),
-                              ],
-                            ),
-                            Text(
-                              'public',
-                              style:
-                                  Theme.of(context).textTheme.caption?.copyWith(
-                                        height: 1.4,
-                                      ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        controller: postController,
-                        minLines: 1,
-                        maxLines: 5,
-                        keyboardType: TextInputType.multiline,
-                        decoration: const InputDecoration(
-                            hintText: 'What\'s in your mind?',
-                            border: InputBorder.none),
+            body: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30.0,
+                        backgroundImage: NetworkImage(cubit.userModel!.image!),
                       ),
+                      const SizedBox(
+                        width: 20.0,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                cubit.userModel!.name!,
+                                style: const TextStyle(
+                                  height: 1.4,
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 5.0,
+                              ),
+                              if (cubit.userModel!.verifiedBadge!)
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.blue,
+                                  size: 16.0,
+                                ),
+                            ],
+                          ),
+                          Text(
+                            'public',
+                            style:
+                                Theme.of(context).textTheme.caption?.copyWith(
+                                      height: 1.4,
+                                    ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      controller: postController,
+                      minLines: 1,
+                      maxLines: 5,
+                      keyboardType: TextInputType.multiline,
+                      decoration: const InputDecoration(
+                          hintText: 'What\'s in your mind?',
+                          border: InputBorder.none),
                     ),
-                    if (cubit.postImageFile != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10.0),
-                        child: Stack(
-                          alignment: AlignmentDirectional.topEnd,
-                          children: [
-                            Container(
-                              width: double.infinity,
-                              height: 200.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(4.0),
-                                image: DecorationImage(
-                                  image: FileImage(cubit.postImageFile!),
-                                  fit: BoxFit.cover,
+                  ),
+                  if (cubit.postImageFile != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10.0),
+                      child: Stack(
+                        alignment: AlignmentDirectional.topEnd,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            height: 200.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4.0),
+                              image: DecorationImage(
+                                image: FileImage(cubit.postImageFile!),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: InkWell(
+                              onTap: () {
+                                cubit.removePostImage();
+                              },
+                              child: CircleAvatar(
+                                radius: 25.0,
+                                backgroundColor: Colors.black.withOpacity(0.5),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 25.0,
                                 ),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: InkWell(
-                                onTap: () {
-                                  cubit.removePostImage();
-                                },
-                                child: CircleAvatar(
-                                  radius: 25.0,
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.5),
-                                  child: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                    size: 25.0,
-                                  ),
-                                ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {
+                            cubit.pickPostImage();
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(IconBroken.Image),
+                              SizedBox(
+                                width: 5.0,
                               ),
-                            ),
-                          ],
+                              Text('Add a photo'),
+                            ],
+                          ),
                         ),
                       ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {
-                              cubit.pickPostImage();
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(IconBroken.Image),
-                                SizedBox(
-                                  width: 5.0,
-                                ),
-                                Text('Add a photo'),
-                              ],
-                            ),
+                      Expanded(
+                        child: TextButton(
+                          onPressed: () {},
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(Icons.tag),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Text('Tags'),
+                            ],
                           ),
                         ),
-                        Expanded(
-                          child: TextButton(
-                            onPressed: () {},
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Icon(Icons.tag),
-                                SizedBox(
-                                  width: 5.0,
-                                ),
-                                Text('Tags'),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           );

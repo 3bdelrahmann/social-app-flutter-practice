@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/comments_model.dart';
 import 'package:social_app/models/message_model.dart';
@@ -16,6 +18,8 @@ import 'package:social_app/shared/components/components.dart';
 import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/states.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:social_app/shared/network/local/cache_helper.dart';
+import 'package:latlong2/latlong.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState());
@@ -28,7 +32,7 @@ class AppCubit extends Cubit<AppStates> {
 
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userId)
+        .doc(CacheHelper.getData(key: 'userId'))
         .get()
         .then((value) {
       // print(value.data());
@@ -57,6 +61,10 @@ class AppCubit extends Cubit<AppStates> {
 
   void changeNavBar(int index) {
     if (index == 1) {
+      getAllUsers();
+    }
+    if (index == 2) {
+      getLocation();
       getAllUsers();
     }
     currentIndex = index;
@@ -97,7 +105,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/$userId/profiles/${Uri.file(profileImage!.path).pathSegments.last}',
+          'users/${CacheHelper.getData(key: 'userId')}/profiles/${Uri.file(profileImage!.path).pathSegments.last}',
         )
         .putFile(profileImage!)
         .then((value) {
@@ -127,7 +135,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/$userId/covers/${Uri.file(coverImage!.path).pathSegments.last}',
+          'users/${CacheHelper.getData(key: 'userId')}/covers/${Uri.file(coverImage!.path).pathSegments.last}',
         )
         .putFile(coverImage!)
         .then((value) {
@@ -163,7 +171,9 @@ class AppCubit extends Cubit<AppStates> {
         uId: userModel!.uId,
         isEmailVerified: false,
         email: userModel!.email,
-        verifiedBadge: userModel!.verifiedBadge);
+        verifiedBadge: userModel!.verifiedBadge,
+        latitude: userModel!.latitude ?? 0.0,
+        longitude: userModel!.longitude ?? 0.0);
     FirebaseFirestore.instance
         .collection('users')
         .doc(userModel!.uId)
@@ -202,7 +212,7 @@ class AppCubit extends Cubit<AppStates> {
     firebase_storage.FirebaseStorage.instance
         .ref()
         .child(
-          'users/$userId/posts/${Uri.file(postImageFile!.path).pathSegments.last}',
+          'users/${CacheHelper.getData(key: 'userId')}/posts/${Uri.file(postImageFile!.path).pathSegments.last}',
         )
         .putFile(postImageFile!)
         .then((value) {
@@ -262,20 +272,12 @@ class AppCubit extends Cubit<AppStates> {
   List<String> postsId = [];
   List<int> likesCounter = [];
   List<int> commentsCounter = [];
-
   void getPostsData() {
-    emit(AppGetPostOnLoadingState());
-
     FirebaseFirestore.instance
         .collection('posts')
         .orderBy('postDateTime')
         .snapshots()
         .listen((event) {
-      posts = [];
-      postsUsers = [];
-      postsId = [];
-      likesCounter = [];
-      commentsCounter = [];
       event.docs.forEach((element) {
         //get posts users
         FirebaseFirestore.instance
@@ -294,16 +296,17 @@ class AppCubit extends Cubit<AppStates> {
                 .snapshots()
                 .listen((commentsEvent) {
               //get comments data
+
               commentsCounter.add(commentsEvent.docs.length);
               likesCounter.add(likesEvent.docs.length);
               postsUsers.add(UserModel.fromJson(postsUsersEvent.data()!));
               posts.add(PostModel.fromJson(element.data()));
               postsId.add(element.id);
-              emit(AppGetPostOnSuccessState());
             });
           });
         });
       });
+      emit(AppGetPostOnSuccessState());
     });
   }
 
@@ -326,6 +329,7 @@ class AppCubit extends Cubit<AppStates> {
       created: Timestamp.fromDate(DateTime.now()),
       uId: userModel!.uId,
       uName: userModel!.name,
+      uImage: userModel!.image,
     );
     FirebaseFirestore.instance
         .collection('posts')
@@ -431,5 +435,119 @@ class AppCubit extends Cubit<AppStates> {
         emit(AppGetMessageOnSuccessState());
       });
     });
+  }
+
+  void getLocation() {
+    // Test if location services are enabled.
+    Geolocator.isLocationServiceEnabled().then((serviceEnabled) {
+      if (!serviceEnabled) {
+        // Location services are not enabled don't continue
+        // accessing the position and request users of the
+        // App to enable the location services.
+        return Future.error('Location services are disabled.');
+      }
+    }).catchError((error) {
+      showToast(
+        text: error.toString(),
+        states: ToastStates.ERROR,
+      );
+    });
+    Geolocator.checkPermission().then((permission) {
+      if (permission == LocationPermission.denied) {
+        Geolocator.requestPermission().then((permission) {
+          if (permission == LocationPermission.denied) {
+            // Permissions are denied, next time you could try
+            // requesting permissions again (this is also where
+            // Android's shouldShowRequestPermissionRationale
+            // returned true. According to Android guidelines
+            // your App should show an explanatory UI now.
+            return Future.error('Location permissions are denied');
+          }
+        }).catchError((error) {
+          showToast(
+            text: error.toString(),
+            states: ToastStates.ERROR,
+          );
+        });
+      }
+    }).catchError((error) {
+      showToast(
+        text: error.toString(),
+        states: ToastStates.ERROR,
+      );
+    });
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.lowest)
+        .then((value) {
+      updateUserLocation(
+        latitude: value.latitude,
+        longitude: value.longitude,
+      );
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  void updateUserLocation({
+    required double latitude,
+    required double longitude,
+  }) {
+    UserModel model = UserModel(
+        name: userModel!.name,
+        phone: userModel!.phone,
+        image: userModel!.image,
+        cover: userModel!.cover,
+        bio: userModel!.bio,
+        uId: userModel!.uId,
+        isEmailVerified: false,
+        email: userModel!.email,
+        verifiedBadge: userModel!.verifiedBadge,
+        latitude: latitude,
+        longitude: longitude);
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userModel!.uId)
+        .update(model.toMap())
+        .then((value) {
+      getUserData();
+    }).catchError((error) {
+      emit(AppUpdateUserDataOnFailedState());
+    });
+  }
+
+  int selectedIndex = 0;
+  List<Marker> buildMarkers() {
+    final _markerList = <Marker>[];
+    for (int i = 0; i < users.length; i++) {
+      final mapItem = users[i];
+      if (mapItem.longitude != 0.0 && mapItem.latitude != 0.0) {
+        _markerList.add(
+          Marker(
+            height: MARKER_SIZE_EXPANDED,
+            width: MARKER_SIZE_EXPANDED,
+            point: LatLng(mapItem.latitude!, mapItem.longitude!),
+            builder: (BuildContext context) {
+              return GestureDetector(
+                onTap: () {
+                  // _selectedIndex = i;
+                  // setState(() {
+                  //   _pageViewController.animateToPage(
+                  //     i,
+                  //     duration: const Duration(milliseconds: 500),
+                  //     curve: Curves.elasticOut,
+                  //   );
+                  // });
+                },
+                child: locationMarker(selected: selectedIndex == i),
+              );
+            },
+          ),
+        );
+      }
+    }
+
+    return _markerList;
   }
 }

@@ -1,5 +1,4 @@
 import 'package:conditional_builder_null_safety/conditional_builder_null_safety.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -107,13 +106,13 @@ class CommentsScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // CircleAvatar(
-            //   radius: 18.0,
-            //   backgroundImage: NetworkImage(''),
-            // ),
-            // SizedBox(
-            //   width: 5.0,
-            // ),
+            CircleAvatar(
+              radius: 18.0,
+              backgroundImage: NetworkImage(commentsModel.uImage!),
+            ),
+            SizedBox(
+              width: 5.0,
+            ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [

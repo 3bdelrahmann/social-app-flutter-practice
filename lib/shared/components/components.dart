@@ -1,7 +1,13 @@
+import 'dart:ui';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:social_app/models/user_model.dart';
 import 'package:social_app/shared/styles/colors.dart';
+
+import 'constants.dart';
 
 void navigateTo(
         {required BuildContext context,
@@ -254,4 +260,105 @@ Widget withNotifier({required Widget child}) => Stack(
         if (!FirebaseAuth.instance.currentUser!.emailVerified)
           verifyEmailNotifier(),
       ],
+    );
+
+class MyLocationMarker extends AnimatedWidget {
+  const MyLocationMarker(Animation<double> animation, {Key? key})
+      : super(
+          key: key,
+          listenable: animation,
+        );
+
+  @override
+  Widget build(BuildContext context) {
+    final value = (listenable as Animation<double>).value;
+    final newValue = lerpDouble(
+      0.5,
+      1.0,
+      value,
+    ); //It does not go to zero if it does not reach the middle
+    const size = 50.0;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Container(
+          width: size * newValue!,
+          height: size * newValue,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: kMainColor.withOpacity(0.5),
+          ),
+        ),
+        Container(
+          width: 20.0,
+          height: 20.0,
+          decoration: const BoxDecoration(
+            color: kMainColor,
+            shape: BoxShape.circle,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+Widget locationMarker({bool selected = false}) => Center(
+      child: AnimatedContainer(
+        height: selected ? MARKER_SIZE_EXPANDED : MARKER_SIZE_SHRINKED,
+        width: selected ? MARKER_SIZE_EXPANDED : MARKER_SIZE_SHRINKED,
+        duration: const Duration(milliseconds: 200),
+        child: SvgPicture.asset(
+          'assets/images/marker.svg',
+          color: kMainColor,
+        ),
+      ),
+    );
+
+Widget mapItemDetails({required UserModel mapMarker}) => Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Card(
+        clipBehavior: Clip.antiAliasWithSaveLayer,
+        margin: EdgeInsets.zero,
+        color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: SvgPicture.asset(
+                        mapMarker.image!,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          mapMarker.name!,
+                          // style: _styleTitle,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+            MaterialButton(
+              padding: EdgeInsets.zero,
+              onPressed: () {},
+              color: kMainColor,
+              elevation: 6.0,
+              child: const Text(
+                'CALL',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            )
+          ],
+        ),
+      ),
     );
