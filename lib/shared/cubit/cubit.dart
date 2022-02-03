@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:social_app/models/comments_model.dart';
 import 'package:social_app/models/message_model.dart';
@@ -19,7 +20,6 @@ import 'package:social_app/shared/components/constants.dart';
 import 'package:social_app/shared/cubit/states.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:social_app/shared/network/local/cache_helper.dart';
-import 'package:latlong2/latlong.dart';
 
 class AppCubit extends Cubit<AppStates> {
   AppCubit() : super(AppInitialState());
@@ -65,7 +65,7 @@ class AppCubit extends Cubit<AppStates> {
     }
     if (index == 2) {
       getLocation();
-      getAllUsers();
+      getAllUsersLocations();
     }
     currentIndex = index;
     emit(AppChangeNavBarState());
@@ -79,7 +79,7 @@ class AppCubit extends Cubit<AppStates> {
       profileImage = File(pickedFile.path);
       emit(AppProfileImagePickedOnSuccessState());
     } else {
-      print('No image selected.');
+      showToast(text: 'No image selected.', states: ToastStates.GREY);
       emit(AppProfileImagePickedOnFailedState());
     }
   }
@@ -91,7 +91,7 @@ class AppCubit extends Cubit<AppStates> {
       coverImage = File(pickedFile.path);
       emit(AppCoverImagePickedOnSuccessState());
     } else {
-      print('No image selected.');
+      showToast(text: 'No image selected.', states: ToastStates.GREY);
       emit(AppCoverImagePickedOnFailedState());
     }
   }
@@ -197,7 +197,7 @@ class AppCubit extends Cubit<AppStates> {
       postImageFile = File(pickedFile.path);
       emit(AppPostImagePickedOnSuccessState());
     } else {
-      print('No image selected.');
+      showToast(text: 'No image selected.', states: ToastStates.GREY);
       emit(AppPostImagePickedOnFailedState());
     }
   }
@@ -451,6 +451,7 @@ class AppCubit extends Cubit<AppStates> {
         text: error.toString(),
         states: ToastStates.ERROR,
       );
+      emit(AppGetLocationOnFailedState());
     });
     Geolocator.checkPermission().then((permission) {
       if (permission == LocationPermission.denied) {
@@ -468,6 +469,7 @@ class AppCubit extends Cubit<AppStates> {
             text: error.toString(),
             states: ToastStates.ERROR,
           );
+          emit(AppGetLocationOnFailedState());
         });
       }
     }).catchError((error) {
@@ -475,6 +477,7 @@ class AppCubit extends Cubit<AppStates> {
         text: error.toString(),
         states: ToastStates.ERROR,
       );
+      emit(AppGetLocationOnFailedState());
     });
 
     // When we reach here, permissions are granted and we can
@@ -485,8 +488,10 @@ class AppCubit extends Cubit<AppStates> {
         latitude: value.latitude,
         longitude: value.longitude,
       );
+      emit(AppGetLocationOnSuccessState());
     }).catchError((error) {
-      print(error);
+      showToast(text: error.toString(), states: ToastStates.ERROR);
+      emit(AppGetLocationOnFailedState());
     });
   }
 
@@ -517,35 +522,52 @@ class AppCubit extends Cubit<AppStates> {
     });
   }
 
+  List<UserModel> usersLocations = [];
+
+  void getAllUsersLocations() {
+    emit(AppGetAllUsersLocationsOnLoadingState());
+    if (usersLocations.isEmpty) {
+      FirebaseFirestore.instance.collection('users').get().then((value) {
+        value.docs.forEach((element) {
+          if (element.data()['uId'] != userModel?.uId) {
+            usersLocations.add(UserModel.fromJson(element.data()));
+          }
+          emit(AppGetAllUsersLocationsOnSuccessState());
+        });
+      }).catchError((error) {
+        emit(AppGetAllUsersLocationsOnFailedState(error.toString()));
+      });
+    }
+  }
+
   int selectedIndex = 0;
-  List<Marker> buildMarkers() {
+
+  List<Marker> buildMarkers(PageController pageViewController) {
     final _markerList = <Marker>[];
-    for (int i = 0; i < users.length; i++) {
-      final mapItem = users[i];
-      if (mapItem.longitude != 0.0 && mapItem.latitude != 0.0) {
-        _markerList.add(
-          Marker(
-            height: MARKER_SIZE_EXPANDED,
-            width: MARKER_SIZE_EXPANDED,
-            point: LatLng(mapItem.latitude!, mapItem.longitude!),
-            builder: (BuildContext context) {
-              return GestureDetector(
-                onTap: () {
-                  // _selectedIndex = i;
-                  // setState(() {
-                  //   _pageViewController.animateToPage(
-                  //     i,
-                  //     duration: const Duration(milliseconds: 500),
-                  //     curve: Curves.elasticOut,
-                  //   );
-                  // });
-                },
-                child: locationMarker(selected: selectedIndex == i),
-              );
-            },
-          ),
-        );
-      }
+    for (int i = 0; i < usersLocations.length; i++) {
+      final mapItem = usersLocations[i];
+      _markerList.add(
+        Marker(
+          height: MARKER_SIZE_EXPANDED,
+          width: MARKER_SIZE_EXPANDED,
+          point: LatLng(mapItem.latitude!, mapItem.longitude!),
+          builder: (BuildContext context) {
+            return GestureDetector(
+              onTap: () {
+                selectedIndex = i;
+
+                pageViewController.animateToPage(
+                  i,
+                  duration: const Duration(milliseconds: 500),
+                  curve: Curves.elasticOut,
+                );
+                emit(AppChangeMarkerState());
+              },
+              child: locationMarker(selected: selectedIndex == i),
+            );
+          },
+        ),
+      );
     }
 
     return _markerList;

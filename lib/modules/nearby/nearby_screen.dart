@@ -63,7 +63,7 @@ class _NearbyScreenState extends State<NearbyScreen>
                   // },
                 ),
                 MarkerLayerOptions(
-                  markers: cubit.buildMarkers(),
+                  markers: cubit.buildMarkers(_pageViewController),
                 ),
                 MarkerLayerOptions(
                   markers: [
@@ -88,10 +88,13 @@ class _NearbyScreenState extends State<NearbyScreen>
                 controller: _pageViewController,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  final item = cubit.users[index];
-                  return mapItemDetails(mapMarker: item);
+                  final item = cubit.usersLocations[index];
+                  return mapItemDetails(
+                    mapMarker: item,
+                    context: context,
+                  );
                 },
-                itemCount: cubit.users.length,
+                itemCount: cubit.usersLocations.length,
               ),
             ),
           ],

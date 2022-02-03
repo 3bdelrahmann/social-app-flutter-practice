@@ -111,3 +111,23 @@ class AppGetMessageOnSuccessState extends AppStates {}
 class AppGetUserByIdOnSuccessState extends AppStates {}
 
 class AppGetUserByIdOnFailedState extends AppStates {}
+
+// Get location
+
+class AppGetLocationOnSuccessState extends AppStates {}
+
+class AppGetLocationOnFailedState extends AppStates {}
+
+//Get all users locations
+
+class AppGetAllUsersLocationsOnLoadingState extends AppStates {}
+
+class AppGetAllUsersLocationsOnSuccessState extends AppStates {}
+
+class AppGetAllUsersLocationsOnFailedState extends AppStates {
+  final String error;
+
+  AppGetAllUsersLocationsOnFailedState(this.error);
+}
+
+class AppChangeMarkerState extends AppStates {}

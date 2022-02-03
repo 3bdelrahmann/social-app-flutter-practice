@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:social_app/models/user_model.dart';
+import 'package:social_app/modules/chats_details/chats_details_screen.dart';
 import 'package:social_app/shared/styles/colors.dart';
 
 import 'constants.dart';
@@ -314,7 +315,9 @@ Widget locationMarker({bool selected = false}) => Center(
       ),
     );
 
-Widget mapItemDetails({required UserModel mapMarker}) => Padding(
+Widget mapItemDetails(
+        {required UserModel mapMarker, required BuildContext context}) =>
+    Padding(
       padding: const EdgeInsets.all(15.0),
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -324,38 +327,46 @@ Widget mapItemDetails({required UserModel mapMarker}) => Padding(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: SvgPicture.asset(
-                        mapMarker.image!,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      radius: 60.0,
+                      backgroundImage: NetworkImage(mapMarker.image!),
+                    ),
+                    SizedBox(
+                      width: 10.0,
+                    ),
+                    Text(
+                      mapMarker.name!,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          mapMarker.name!,
-                          // style: _styleTitle,
-                        ),
-                      ],
-                    ),
-                  )
-                ],
+                  ],
+                ),
               ),
             ),
             MaterialButton(
               padding: EdgeInsets.zero,
-              onPressed: () {},
+              onPressed: () {
+                navigateTo(
+                    context: context,
+                    newRoute: ChatDetailsScreen(userModel: mapMarker),
+                    backRoute: true);
+              },
               color: kMainColor,
               elevation: 6.0,
               child: const Text(
-                'CALL',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                'Message',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             )
           ],
