@@ -47,7 +47,7 @@ class RegisterCubit extends Cubit<RegisterStates> {
       phone: phone,
       uId: uId,
       image:
-          'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/default-profile.png?alt=media&token=8abeb46c-805e-4fe5-9132-f1cb83742dee',
+          'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/default-profile.jpg?alt=media&token=2fec4ce5-0f29-4547-9c16-1401e8e32737',
       cover:
           'https://firebasestorage.googleapis.com/v0/b/social-app-44b0e.appspot.com/o/default-cover.jpg?alt=media&token=d60819f8-5673-455c-9d70-2684a5d9754b',
       bio: 'bio ...',

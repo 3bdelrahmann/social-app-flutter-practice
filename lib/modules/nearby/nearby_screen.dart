@@ -86,7 +86,7 @@ class _NearbyScreenState extends State<NearbyScreen>
               height: MediaQuery.of(context).size.height * 0.3,
               child: PageView.builder(
                 controller: _pageViewController,
-                physics: const NeverScrollableScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 itemBuilder: (context, index) {
                   final item = cubit.usersLocations[index];
                   return mapItemDetails(

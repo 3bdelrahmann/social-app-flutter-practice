@@ -21,74 +21,77 @@ class HomeScreen extends StatelessWidget {
       return BlocConsumer<AppCubit, AppStates>(
         listener: (context, state) {},
         builder: (context, state) => ConditionalBuilder(
-          condition: cubit.userModel != null && cubit.posts.isNotEmpty,
-          builder: (context) => SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                Card(
-                  elevation: 5.0,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  margin: const EdgeInsets.all(8.0),
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 24.0,
-                          backgroundImage:
-                              NetworkImage(cubit.userModel!.image!),
-                        ),
-                        const SizedBox(
-                          width: 10.0,
-                        ),
-                        Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              navigateTo(
-                                context: context,
-                                newRoute: AddPostScreen(),
-                                backRoute: true,
-                              );
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(15.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30.0),
-                                color: Colors.grey[200],
-                              ),
-                              child: Text(
-                                'What\'s in your mind?',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .caption
-                                    ?.copyWith(),
-                              ),
+          condition: cubit.userModel != null,
+          builder: (context) => Column(
+            children: [
+              Card(
+                elevation: 5.0,
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                margin: const EdgeInsets.all(8.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 24.0,
+                        backgroundImage: NetworkImage(cubit.userModel!.image!),
+                      ),
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      Expanded(
+                        child: InkWell(
+                          onTap: () {
+                            navigateTo(
+                              context: context,
+                              newRoute: AddPostScreen(),
+                              backRoute: true,
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(30.0),
+                              color: Colors.grey[200],
+                            ),
+                            child: Text(
+                              'What\'s in your mind?',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-                ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) => buildPostsItem(
-                        context: context,
-                        postModel: cubit.posts[index],
-                        postsUsersModel: cubit.postsUsers[index],
-                        postId: cubit.postsId[index],
-                        index: index),
-                    separatorBuilder: (context, index) => const SizedBox(
-                          height: 8.0,
-                        ),
-                    itemCount: cubit.posts.length),
-                const SizedBox(
-                  height: 8.0,
+              ),
+              Expanded(
+                child: ConditionalBuilder(
+                  condition: cubit.posts.isNotEmpty,
+                  builder: (context) => ListView.separated(
+                      shrinkWrap: true,
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: (context, index) => buildPostsItem(
+                          context: context,
+                          postModel: cubit.posts[index],
+                          postsUsersModel: cubit.postsUsers[index],
+                          postId: cubit.postsId[index],
+                          index: index),
+                      separatorBuilder: (context, index) => const SizedBox(
+                            height: 8.0,
+                          ),
+                      itemCount: cubit.posts.length),
+                  fallback: (context) =>
+                      const Center(child: CircularProgressIndicator()),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+            ],
           ),
           fallback: (context) => const Center(
             child: CircularProgressIndicator(),

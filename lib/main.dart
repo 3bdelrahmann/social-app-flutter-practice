@@ -42,29 +42,31 @@ class SocialApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (BuildContext context) => LoginCubit(),
-          ),
-          BlocProvider(
-            create: (BuildContext context) => RegisterCubit(),
-          ),
-          BlocProvider(
-              create: (BuildContext context) => AppCubit()..getUserData())
-        ],
-        child: BlocConsumer<AppCubit, AppStates>(
-            listener: (context, state) {},
-            builder: (context, state) => MaterialApp(
-                  debugShowCheckedModeBanner: false,
-                  theme: lightTheme,
-                  home: ConditionalBuilder(
-                      condition: onBoarding,
-                      builder: (BuildContext context) => ConditionalBuilder(
-                          condition: userId.trim().isNotEmpty,
-                          builder: (BuildContext context) => const MainLayout(),
-                          fallback: (BuildContext context) => LoginScreen()),
-                      fallback: (BuildContext context) =>
-                          const OnBoardingScreen()),
-                )));
+      providers: [
+        BlocProvider(
+          create: (BuildContext context) => LoginCubit(),
+        ),
+        BlocProvider(
+          create: (BuildContext context) => RegisterCubit(),
+        ),
+        BlocProvider(
+          create: (BuildContext context) => AppCubit(),
+        )
+      ],
+      child: BlocConsumer<AppCubit, AppStates>(
+        listener: (context, state) {},
+        builder: (context, state) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: lightTheme,
+          home: ConditionalBuilder(
+              condition: onBoarding,
+              builder: (BuildContext context) => ConditionalBuilder(
+                  condition: userId.trim().isNotEmpty,
+                  builder: (BuildContext context) => const MainLayout(),
+                  fallback: (BuildContext context) => LoginScreen()),
+              fallback: (BuildContext context) => const OnBoardingScreen()),
+        ),
+      ),
+    );
   }
 }
