@@ -30,13 +30,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   List<BoardingModel> boarding = [
     BoardingModel(
-      image: 'assets/images/welcoming.svg',
+      image: 'assets/images/onboarding.svg',
       title: 'diam in arcu',
       body:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
     ),
     BoardingModel(
-      image: 'assets/images/social_interaction.svg',
+      image: 'assets/images/onboarding.svg',
       title: 'diam in arcu',
       body:
           'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',

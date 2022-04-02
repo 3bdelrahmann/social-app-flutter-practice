@@ -55,7 +55,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
-    - assets/lottie_animations/
   fonts:
     - family: Jannah
       fonts:
